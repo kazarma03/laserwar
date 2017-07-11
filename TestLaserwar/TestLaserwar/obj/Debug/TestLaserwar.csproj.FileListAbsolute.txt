@@ -1,0 +1,14 @@
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\TestLaserwar.exe.config
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\TestLaserwar.exe
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\TestLaserwar.pdb
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.csprojResolveAssemblyReference.cache
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\MainWindow.g.cs
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\App.g.cs
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar_MarkupCompile.cache
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar_MarkupCompile.lref
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\MainWindow.baml
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.g.resources
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.Properties.Resources.resources
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.csproj.GenerateResource.Cache
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.exe
+C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.pdb
