@@ -18,7 +18,7 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
                 </Trigger>
-                <!--Ф-->
+                <!--ФОКУС-->
                 <Trigger Property="IsKeyboardFocused" Value="True">
                     <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
                 </Trigger>
