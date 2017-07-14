@@ -6,88 +6,246 @@
         xmlns:local="clr-namespace:TestLaserwar"
         mc:Ignorable="d"
         Title="TestLaserwar" Height="750
-        " Width="900" MinHeight="750" MinWidth="900">
+        " Width="1050" MinHeight="750" MinWidth="1050">
     <Window.Resources>
-        <ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
-            <Border BorderBrush="#FF2C2C2C" BorderThickness="2" CornerRadius="2" Name="border"
-                    TextBlock.Foreground="White">
+        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="Grid">
+                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
+                            <Border x:Name="Rectangle1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"  Background="{TemplateBinding Background}" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="Horizontal">
+                                <Setter TargetName="Rectangle1" Property="Width" Value="Auto" />
+                                <Setter TargetName="Rectangle1" Property="Height" Value="4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--ScrollBars-->
+        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
+            <Setter Property="Foreground" Value="#FF2C2C2C" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Width" Value="10" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot" Width="5" Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.00001*" />
+                            </Grid.RowDefinitions>
+
+                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="false">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" Style="{DynamicResource ScrollThumbs}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                <Setter Value="{DynamicResource ButtonSelectBrush}" TargetName="Thumb" Property="Background" />
+                            </Trigger>
+                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                <Setter Value="{DynamicResource DarkBrush}" TargetName="Thumb" Property="Background" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="GridRoot" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="PART_Track" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" Value="Auto" />
+                                <Setter Property="Height" Value="12" />
+                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
+                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
+                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--<ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+            <Border BorderBrush="#FF2C2C2C" Background="#FF2C2C2C" Name="border" >
                 <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"></ContentPresenter>
             </Border>
             <ControlTemplate.Triggers>
-                <!--Наведение мыши-->
+                -->
+        <!--Наведение мыши-->
+        <!--
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
                 </Trigger>
-                <!--Фокус-->
-                <Trigger Property="IsKeyboardFocused" Value="True">
+              
+                -->
+        <!--<DataTrigger Binding="{Binding MainButtonkey, Mode=OneWay}" Value="d">
                     <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
-                </Trigger>
-                <!--Нажатие мыши-->
+                </DataTrigger>-->
+        <!--Нажатие мыши-->
+        <!--
                 <Trigger Property="IsPressed" Value="True">
                     <Setter TargetName="border" Property="Background" Value="#FF5656FF"></Setter>
                 </Trigger>
             </ControlTemplate.Triggers>
-        </ControlTemplate>
-
+        </ControlTemplate>-->
+        <Style x:Key="MainButton" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="#FF2C2C2C"></Setter>
+                <Setter Property="Background" Value="#FF2C2C2C"></Setter>
+            </Style.Setters>
+            <Style.Triggers>
+                <!--Наведение мыши-->
+                <!--
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="Blue"></Setter>
+                    </Trigger>-->
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="AccessoryButton" TargetType="Button">
+            <Style.Setters>
+                <Setter Property="BorderBrush" Value="Blue"></Setter>
+                <Setter Property="Background" Value="Blue"></Setter>
+                <Setter Property="Foreground" Value="White"></Setter>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="LabelMain" TargetType="Label">
+            <Style.Setters>
+                <Setter Property="FontSize" Value="20"></Setter>
+                <Setter Property="Foreground" Value="Black"></Setter>
+                <Setter Property="FontWeight" Value="Bold"></Setter>
+                <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="LabelSub" TargetType="Label">
+            <Style.Setters>
+                <Setter Property="FontSize" Value="13"></Setter>
+                <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+                <Setter Property="FontWeight" Value="Bold"></Setter>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="dataGrid" TargetType="DataGrid">
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource res}"></Setter>
+        </Style>
+        <Style x:Key="res" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="White"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
+            <Setter Property="VerticalAlignment" Value="Top"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style>
 
     </Window.Resources>
-    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" ></ColumnDefinition>
-            <ColumnDefinition Width="20"></ColumnDefinition>
+            <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition MinHeight="225"></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
-            <RowDefinition Height="100"></RowDefinition>
-            <RowDefinition MinHeight="225"></RowDefinition>
-        </Grid.RowDefinitions>
-        <!--надо найти вариант лучше!-->
-        <StackPanel Background="#FF2C2C2C" Grid.RowSpan="5"></StackPanel>
-        <!--!!!!!!!!!!!!-->
-        <!--Кнопки главного меню -->
-        <Button x:Name="download"   Grid.Row="1" Template="{StaticResource ButtonTemplate}" Click="download_Click" Background="#FF2C2C2C" BorderBrush="#FF2C2C2C">
-            <Image Source="resources/download.png" Height="20" Width="20"></Image>
-        </Button>
-        <Button x:Name="sounds" Grid.Row="2" Template="{StaticResource ButtonTemplate}" Click="sounds_Click" Background="#FF2C2C2C" BorderBrush="#FF2C2C2C" >
-            <Image Source="resources/sounds.png" Height="20" Width="20"></Image>
-        </Button>
-        <Button x:Name="games" Grid.Row="3" Template="{StaticResource ButtonTemplate}" Click="games_Click" Background="#FF2C2C2C" BorderBrush="#FF2C2C2C">
-            <Image Source="resources/games.png" Height="20" Width="20"></Image>
-        </Button>
-        
-        <!--_________________________-->
-        <StackPanel x:Name="PageDownload"  Grid.Column="2" Grid.RowSpan="5">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="150"></ColumnDefinition>
-                    <ColumnDefinition Width="250"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="70"></RowDefinition>
-                    <RowDefinition Height="55"></RowDefinition>
-                    <RowDefinition Height="60"></RowDefinition>
-                    
-                    <RowDefinition></RowDefinition>
-                </Grid.RowDefinitions>
-                <Label Grid.Row="1" FontSize="20" FontWeight="Bold">ЗАГРУЗКА</Label>
-                <Label Grid.Row="2" FontSize="13" FontWeight="Bold" >Адрес файла</Label>
-                <Label Grid.Row="2" FontSize="13" Margin="0,20,0,0">Адрес файла</Label>
-                <Button x:Name="button" Content="ЗАГРУЗИТЬ" Grid.Column="1" Grid.Row="2" FontSize="13" FontWeight="Bold" Grid.RowSpan="2" Height="30"/>
-                <Label Grid.Row="2" Grid.Column="3" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" >Файл успешно загружен</Label>
-            </Grid>
-        </StackPanel>
-        <!--_________________________-->
-        <StackPanel x:Name="PageSound"  Grid.Column="2" Grid.RowSpan="5">
-          
-        </StackPanel>
-        <!--_________________________-->
-        <StackPanel x:Name="PageGame"  Grid.Column="2" Grid.RowSpan="5" Background="#FFF10ED3" >
-            
-        </StackPanel>
+        <!--Grid Главное меню -->
+        <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2C2C2C">
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="225"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition MinHeight="225"></RowDefinition>
+            </Grid.RowDefinitions>
+            <!--Кнопки главного меню  -->
+            <Button x:Name="download" Style="{StaticResource MainButton}" Grid.Row="1"  Click="download_Click">
+                <Image Source="resources/download.png" Height="20" Width="20"></Image>
+            </Button>
+            <Button x:Name="sounds" Style="{StaticResource MainButton}" Grid.Row="2" Click="sounds_Click">
+                <Image Source="resources/sounds.png" Height="20" Width="20"></Image>
+            </Button>
+            <Button x:Name="games" Style="{StaticResource MainButton}" Grid.Row="3" Click="games_Click">
+                <Image Source="resources/games.png" Height="20" Width="20"></Image>
+            </Button>
+        </Grid>
+        <!--**************-->
+        <!--Grid Форма загрузки -->
+        <Grid Name="GridDownload" Grid.Column="2"  Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="400"></ColumnDefinition>
+                <ColumnDefinition Width="150"></ColumnDefinition>
+                <ColumnDefinition Width="300"></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗАГРУЗКА</Label>
+            <Label Grid.Row="2" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Адрес файла</Label>
+            <TextBox Grid.Row="3" Name="TextBoxAddress" Height="20" Width="350"  BorderBrush="Blue" SelectionBrush="White" BorderThickness="0,0,0,2" Background="White" HorizontalAlignment="Left" Margin="5,0,0,10" Text="https://laserwar.com/testtask/get?dataType=Json" Foreground="#FF2C2C2C"></TextBox>
+            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Name="buttonDownload" Style="{StaticResource AccessoryButton}" Content="ЗАГРУЗИТЬ" FontSize="13" FontWeight="Bold" Height="40" Click="buttonDownload_Click" Margin="0,5,0,0" Width="150"/>
+            <Label Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="LabelStateDownload" Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
+            <TextBox Grid.Row="5" Grid.ColumnSpan="3" Name="TextBoxJson"  BorderBrush="Blue" SelectionBrush="White" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" BorderThickness="0" Background="White" Visibility="Hidden" Foreground="#FF2C2C2C"/>
+        </Grid>
+        <!--**************-->
+        <!--Grid Форма Звука -->
+        <Grid Name="GridSound" Grid.Column="2" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="50"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition ></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
+            <DataGrid x:Name="dataGridSounds" Style="{DynamicResource dataGrid}" Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" RowHeight="20" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" SelectionChanged="dataGridSounds_SelectionChanged" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
+                <DataGrid.Columns >
+                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Имя файла"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"/>
+                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Размер файла" MinWidth="150" IsReadOnly="True" CanUserResize="False"/>
+                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Загрузка файла" MinWidth="220"/>
+                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Воспроизвести" MinWidth="220"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Grid>
+        <!--**************-->
+        <!--Grid Форма Игра -->
+        <Grid Name="GridGames" Grid.Column="2" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+            </Grid.RowDefinitions>
+        </Grid>
+        <!--Grid Форма Детализация игры -->
+        <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+            </Grid.RowDefinitions>
+        </Grid>
     </Grid>
 </Window>

@@ -12,3 +12,13 @@ C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.Properties.Resources.re
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.csproj.GenerateResource.Cache
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.exe
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\TestLaserwar.pdb
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\Newtonsoft.Json.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\Newtonsoft.Json.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.SqlServer.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.EF6.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.Linq.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.SqlServer.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.xml
