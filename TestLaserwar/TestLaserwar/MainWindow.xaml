@@ -107,25 +107,25 @@
             </Grid.RowDefinitions>
             <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
             <!--Таблица для вывода звуковых файлов -->
-            <DataGrid x:Name="dataGridSounds" Style="{StaticResource dataGrid}" CellStyle="{StaticResource GridCellsStyle}" RowStyle="{StaticResource GridRowStyle}" RowHeight="40" ItemsSource="{Binding Source=MyList}" Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" SelectionChanged="dataGridSounds_SelectionChanged" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
+            <DataGrid x:Name="dataGridSounds" SelectedItem="{Binding Path=Sel, Mode=TwoWay}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource GridCellsStyle}" RowStyle="{StaticResource GridRowStyle}" RowHeight="40"  Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
                 <DataGrid.Columns>
 
                     <!--Cтолбец Названий композиций -->
-                    <DataGridTextColumn Header="Имя файла" Binding="{Binding Name}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Имя файла" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
                     <!--Cтолбец Размеров файла -->
                     <!--<DataGridTextColumn Header="Размер файла" Binding="{Binding Size}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>-->
                     <DataGridTemplateColumn  Header="Размер файл" MinWidth="150">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Label Content="{Binding Size}" Style="{StaticResource LabelGrid}" MinWidth="20"></Label>
+                                    <Label Content="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource LabelGrid}" MinWidth="20"></Label>
                                     <Label Content="kb" Grid.Column="1" Style="{StaticResource LabelGrid}" Padding="5,0,0,0"></Label>
                                 </StackPanel>
                             </DataTemplate> 
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <!--Скрытый столбец URl -->
-                    <DataGridTextColumn Header="URL" Binding="{Binding URL}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False" Visibility="Hidden"></DataGridTextColumn>
+                    <DataGridTextColumn Header="URL" Binding="{Binding URL, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False" Visibility="Hidden"></DataGridTextColumn>
                     <!--Столбец Загрузки файла -->
                     <DataGridTemplateColumn  Header="Загрузка файла" MinWidth="220">
                         <DataGridTemplateColumn.CellTemplate>
@@ -138,14 +138,14 @@
                                     <Grid.RowDefinitions>
                                     </Grid.RowDefinitions>
                                     <!--Кнопка загрузки файла -->
-                                    <Button Grid.Column="0" Style="{StaticResource GridButton}" VerticalAlignment="Bottom" Height="20" Width="20">
-                                        <Image Source="resources/downloaded_sound.png" Height="17" Width="17"></Image>
+                                    <Button Name="DownloadSound" Grid.Column="0" Style="{StaticResource GridButton}" IsEnabled="{Binding OnOfDownload,  UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="DownloadSound_Click">
+                                        <Image Source="resources/downloaded_sound.png" Height="16" Width="16"></Image>
                                     </Button>
                                     
                                     <StackPanel Grid.Column="1" >
                                         <!--Прогрессор и Label для вывода процентов -->
-                                        <Label  Grid.Row="0" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">50 %</Label>
-                                        <ProgressBar Grid.Row="1" Value="47" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                        <Label  Grid.Row="0" Visibility="{Binding OnOfDownloadProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">50 %</Label>
+                                        <ProgressBar Name="Percent" Value="{Binding DownloadProgress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPercent, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
@@ -163,13 +163,13 @@
                                     <Grid.RowDefinitions>
                                     </Grid.RowDefinitions>
                                     <!--Кнопка запуска остановки файла -->
-                                    <Button Grid.Column="0" Style="{StaticResource GridButton}" VerticalAlignment="Bottom" Height="20" Width="20">
+                                    <Button Name="PlaySound" Grid.Column="0" Style="{DynamicResource GridButton}" IsEnabled="{Binding OnOfPlay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="PlaySound_Click">
                                         <Image Source="resources/play_disabled.png" Height="13" Width="13"></Image>
                                     </Button>
                                     <StackPanel Grid.Column="1" >
                                         <!--Прогрессор и Label для вывода времени прослушки композиции -->
-                                        <Label  Grid.Row="0" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">1:20</Label>
-                                        <ProgressBar Grid.Row="1" Value="47" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                        <Label Grid.Row="0" Visibility="{Binding OnOfTimePlay, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">1:20</Label>
+                                        <ProgressBar Name="Time" Value="{Binding PlayProgress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPlayProgress, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace TestLaserwar
 {
@@ -41,7 +42,7 @@ namespace TestLaserwar
         {
             RefMainMenu(true, false, false);
             download.Background = new SolidColorBrush(Colors.Blue);
-
+            dataGridSounds.ItemsSource = bindSoundTabel;
         }
 
         Thread th;
@@ -91,18 +92,6 @@ namespace TestLaserwar
             RefMainMenu(true, false, false);
         }
 
-        class MyTable
-        {
-            public MyTable(string Name, int Size, string URL)
-            {
-                this.Name = Name;
-                this.Size = Size;
-                this.URL = URL;
-            }
-            public string Name { get; set; }
-            public int Size { get; set; }
-            public string URL { get; set; }
-        }
 
         private void sounds_Click(object sender, RoutedEventArgs e)
         {
@@ -216,15 +205,26 @@ namespace TestLaserwar
             }
         }
 
+        //public class DataItem
+        //{
+        //    public string name { get; set; }
+        //    public int size { get; set; }
+        //    public string URL { get; set; }
+        //    public int DownloadProgress { get; set; }
+        //}
+
         /// <summary>
         /// Считываем объект JSON по url парсим его и обрабатываем содержимое
         /// </summary>
         /// <param name="url"> ссылка по которой находиться объект JSON </param>
         public void DovnloadJSON( string url)
         {
+            bindSoundTabel.Clear();
+            
             //Скрываем интерфейс поиска данных
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
+                dataGridSounds.Items.Refresh();
                 TextBoxJson.Visibility = Visibility.Hidden;
                 LabelStateDownload.Visibility = Visibility.Hidden;
             });
@@ -290,7 +290,7 @@ namespace TestLaserwar
                 if (jObject["sounds"] != null)
                 {
                     MainVal = "";
-                    List<MyTable> result = new List<MyTable>(3);
+                    //List<MyTable> result = new List<MyTable>(3);
                     foreach (var Data in jObject["sounds"])
                     {
                         //собираем под строку для вывода на форму
@@ -298,15 +298,16 @@ namespace TestLaserwar
                         //собирамем набор строк для последующей загрузки данных в БД
                         val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
                         //собираем данные о композициях для последующего добавления их в таблицу
-                        result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
+                        //result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
+                        bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"])); 
                         //собираем полную строку для вывода на форму
                         if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
                     }
                     //Добавление композиций в таблицу
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                    {
-                        dataGridSounds.ItemsSource = result;
-                    });
+                    //this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    //{
+                    //    dataGridSounds.ItemsSource = result;
+                    //});
 
                     //Если в JSON объекте присутствуют записи о звуковых файлах выводим их в нижней форме экрана и заносис в БД laserwar.db таблица Sounds
                     if (!string.IsNullOrWhiteSpace(MainVal))
@@ -355,6 +356,7 @@ namespace TestLaserwar
             //Отображаем статус загрузки данных
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
+                dataGridSounds.Items.Refresh();
                 LabelStateDownload.Visibility = Visibility.Visible;
             });
         }
@@ -371,10 +373,55 @@ namespace TestLaserwar
             th = new Thread(() =>DovnloadJSON(url));
             th.Start();
         }
-
-        private void dataGridSounds_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        class SoundTable 
         {
+            public SoundTable(string Name, int Size, string URL)
+            {
+                this.Name = Name;
+                this.Size = Size;
+                this.URL = URL;                
+            }
+            public string Name { get; set; }
+            public int Size { get; set; }
+            public string URL { get; set; }
+            public int DownloadProgress { get; set; }
+            public int PlayProgress { get; set; }
+            public int Sel { get; set; }
+            public bool OnOfDowlLoad { get; set; }           
+            public Visibility OnOfPercent { get; set; }
+ 
+            public Visibility OnOfDownloadProgress { get; set; }
+            public bool OnOfPlay { get; set; }
+            public Visibility OnOfTimePlay { get; set; }
+            public Visibility OnOfPlayProgress { get; set; }
+        }
 
+        List<SoundTable> bindSoundTabel = new List<SoundTable>();
+
+
+        private void PlaySound_Click(object sender, RoutedEventArgs e)
+        {
+            int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
+            bindSoundTabel[ind].DownloadProgress = 70;
+            bindSoundTabel[ind].PlayProgress = 40;
+            bindSoundTabel[ind].OnOfPlay = true;
+            bindSoundTabel[ind].Name = "ooooooooooooooooooooooo" ;
+
+            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+            bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
+            bindSoundTabel[ind].OnOfTimePlay = Visibility.Hidden;
+            bindSoundTabel[ind].OnOfPlayProgress = Visibility.Hidden;
+
+            dataGridSounds.Items.Refresh();            
+        }
+
+
+
+        private void DownloadSound_Click(object sender, RoutedEventArgs e)
+        {
+            int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
+            bindSoundTabel[ind].OnOfPlay = true;
+            dataGridSounds.Items.Refresh();
         }
     }
 }

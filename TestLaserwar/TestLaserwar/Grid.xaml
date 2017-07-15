@@ -39,11 +39,44 @@
         <Setter Property="VerticalAlignment" Value="Bottom" />
     </Style>
     
-    <Style x:Key="GridButton" TargetType="Button">
+    <!--<Style x:Key="GridButton" TargetType="Button">
         <Style.Setters>
             <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
             <Setter Property="Background" Value="{x:Null}"></Setter>
+            <Setter Property="Width" Value="20"></Setter>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Margin" Value="0,0,0,1"></Setter>
         </Style.Setters>
+    </Style>-->
+
+    <Style x:Key="GridButton" TargetType="Button">
+        <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
+        <Setter Property="Background" Value="{x:Null}"></Setter>
+        <Setter Property="Width" Value="20"></Setter>
+        <Setter Property="Height" Value="20"></Setter>
+        <Setter Property="Margin" Value="0,0,0,1"></Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{x:Null}"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="#FFBEE6FD"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="LabelGrid" TargetType="Label">
