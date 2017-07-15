@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace TestLaserwar
 {
@@ -41,6 +43,8 @@ namespace TestLaserwar
             download.Background = new SolidColorBrush(Colors.Blue);
 
         }
+
+        Thread th;
 
         /// <summary>
         /// Обновление форм при переходах
@@ -111,17 +115,124 @@ namespace TestLaserwar
         }
 
         /// <summary>
-        /// Загрузка объекта JSON
+        /// Создаём БД для игр
         /// </summary>
-        private void buttonDownload_Click(object sender, RoutedEventArgs e)
+        private void CreateDB()
         {
-            TextBoxJson.Visibility = Visibility.Hidden;
-            LabelStateDownload.Visibility = Visibility.Hidden;
-            TextBoxJson.Text = "";
-            string url = TextBoxAddress.Text;
+            SQLite SQL = new SQLite();
+            
+            string tabelGames = "Games";
+            SQL.TabelDROP(tabelGames);
+            string fildGames = "id_game INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "game_name TEXT, "
+            + "game_date INTEGER";
+            SQL.TabelCreate(tabelGames, fildGames);
+
+            string tabelTeams = "Teams";
+            SQL.TabelDROP(tabelTeams);
+            string fildTeams = "id_team INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "team_name TEXT";
+            SQL.TabelCreate(tabelTeams, fildTeams);
+
+            //string tabelGamers = "Gamers";
+            //SQL.TabelDROP(tabelGamers);
+            //string fildGamers = "id_gamer INTEGER PRIMARY KEY AUTOINCREMENT, "
+            //+ "gamer_name TEXT";
+            //SQL.TabelCreate(tabelGamers, fildGamers);
+            //fildGamers = "gamer_name";
+
+            string tabelEvents = "Events";
+            SQL.TabelDROP(tabelEvents);
+            string fildEvents = "id_event INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "game INTEGER, "
+            + "team INTEGER, "
+            + "gamer_name TEXT, "
+            + "rating INTEGER, "
+            + "accuracy REAL, "
+            + "shots INTEGER, "
+            + "FOREIGN KEY(game) REFERENCES Games(id_game), "
+            + "FOREIGN KEY(team) REFERENCES Commands(id_team)";
+            SQL.TabelCreate(tabelEvents, fildEvents);
+        }
+
+        /// <summary>
+        /// Парсим XML по ссылкам url
+        /// </summary>
+        /// <param name="val"> набор строк с url ссылками где находятся XML файлы с данными по играм </param>
+        private void XMLparce(List<string> val)
+        {
+            SQLite SQL = new SQLite();
+            //Создаём таблицы в БД для игр
+            CreateDB();
+            string tabelGames = "Games";
+            string fildGames = "game_name, game_date";
+            string tabelTeams = "Teams";
+            string fildTeams = "team_name";
+            string tabelEvents = "Events";
+            string fildEvents = "game, team, gamer_name, rating, accuracy, shots";
+
+            // по каждой URL скачиваем XML и парсим его
+            XmlReader reader;
+            DataTable dat;
+            string id_Game = "";
+            string id_Team = "";
+            List<string> valSQL = new List<string>();
+            string values;
+
+            foreach (string param in val)
+            {
+                reader = XmlReader.Create(param);
+                while (reader.Read())
+                {
+                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "game"))
+                    {
+                        values = "";
+                        while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
+                        values = "'" + valSQL[0] + "', '" + valSQL[1] + "'";
+                        SQL.SqlInsertSingle(tabelGames, fildGames, values);
+                        dat = SQL.SqlRead("SELECT id_game from Games where game_name = '" + valSQL[0] + "' and game_date = '" + valSQL[1] + "'");
+                        id_Game = dat.Rows[0][0].ToString(); ;
+                        valSQL.Clear();
+                    }
+                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "team"))
+                    {
+                        values = "";
+                        while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
+                        values = "'" + valSQL[0] + "'";
+                        SQL.SqlInsertSingle(tabelTeams, fildTeams, values);
+                        dat = SQL.SqlRead("SELECT id_team from Teams where team_name = '" + valSQL[0] + "'");
+                        id_Team = dat.Rows[0][0].ToString();
+                        valSQL.Clear();
+                    }
+                    if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "player"))
+                    {
+                        while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
+                        values = "'" + id_Game + "', '" + id_Team + "', '" + valSQL[0] + "', '" + valSQL[1] + "', '" + valSQL[2] + "', '" + valSQL[3] + "'";
+                        SQL.SqlInsertSingle(tabelEvents, fildEvents, values);
+                        valSQL.Clear();
+                    }
+                    reader.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Считываем объект JSON по url парсим его и обрабатываем содержимое
+        /// </summary>
+        /// <param name="url"> ссылка по которой находиться объект JSON </param>
+        public void DovnloadJSON( string url)
+        {
+            //Скрываем интерфейс поиска данных
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                TextBoxJson.Visibility = Visibility.Hidden;
+                LabelStateDownload.Visibility = Visibility.Hidden;
+            });
             WebClient client = new WebClient();
             JObject jObject;
             string data = null;
+            // true- JSON объект содержит необходимые данные, false- данных для вывода нет
+            bool keyRef = false;
 
             try
             {
@@ -140,7 +251,14 @@ namespace TestLaserwar
 
                 // Выводим Текст ошибки
                 MainVal = (string)jObject["error"];
-                if (!string.IsNullOrWhiteSpace(MainVal)) TextBoxJson.Text += "Error:" + Environment.NewLine + MainVal + Environment.NewLine;
+                if (!string.IsNullOrWhiteSpace(MainVal))
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        TextBoxJson.Text += "Error:" + Environment.NewLine + MainVal + Environment.NewLine;
+                    });
+                    keyRef = true;
+                }
 
                 // Выводим URL игр           
                 if (jObject["games"] != null)
@@ -148,154 +266,110 @@ namespace TestLaserwar
                     MainVal = "";
                     foreach (var Data in jObject["games"])
                     {
+                        //собираем под строку для вывода на форму
                         SubVal = (string)Data["url"];
+                        //собирамем набор строк для последующей загрузки данных по URl
                         val.Add((string)Data["url"]);
+                        //собираем полную строку для вывода на форму
                         if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + Environment.NewLine;
                     }
                     //Если в JSON объекте присутствуют записи об играх выводим их в нижней форме экрана и заносим в БД laserwar.db таблица Games
                     if (!string.IsNullOrWhiteSpace(MainVal))
                     {
-                        TextBoxJson.Text += "Game url:" + Environment.NewLine + MainVal + Environment.NewLine;
-
-                        //Создаём БД
-                        string tabelGames = "Games";
-                        SQL.TabelDROP(tabelGames);
-                        string fildGames = "id_game INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + "game_name TEXT, "
-                        + "game_date INTEGER";
-                        SQL.TabelCreate(tabelGames, fildGames);
-                        fildGames = "game_name, game_date";
-
-                        string tabelTeams = "Teams";
-                        SQL.TabelDROP(tabelTeams);
-                        string fildTeams = "id_team INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + "team_name TEXT";
-                        SQL.TabelCreate(tabelTeams, fildTeams);
-                        fildTeams = "team_name";
-
-                        //string tabelGamers = "Gamers";
-                        //SQL.TabelDROP(tabelGamers);
-                        //string fildGamers = "id_gamer INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        //+ "gamer_name TEXT";
-                        //SQL.TabelCreate(tabelGamers, fildGamers);
-                        //fildGamers = "gamer_name";
-
-                        string tabelEvents = "Events";
-                        SQL.TabelDROP(tabelEvents);
-                        string fildEvents = "id_event INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + "game INTEGER, "
-                        + "team INTEGER, "
-                        + "gamer_name TEXT, "
-                        + "rating INTEGER, "
-                        + "accuracy REAL, "
-                        + "shots INTEGER, "
-                        + "FOREIGN KEY(game) REFERENCES Games(id_game), "
-                        + "FOREIGN KEY(team) REFERENCES Commands(id_team)";
-                        SQL.TabelCreate(tabelEvents, fildEvents);
-                        fildEvents = "game, team, gamer_name, rating, accuracy, shots";
-
-                        // по каждой URL скачиваем XML и парсим его
-                        XmlReader reader;
-                        DataTable dat;
-                        string id_Game = "";
-                        string id_Team = "";
-                        List<string> valSQL = new List<string>();
-                        string values;
-
-                        foreach (string param in val)
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
                         {
-                            reader = XmlReader.Create(param);
-                            while (reader.Read())
-                            {
-                                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "game"))
-                                {
-                                    values = "";
-                                    while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
-                                    values = "'" + valSQL[0] + "', '" + valSQL[1] + "'";
-                                    SQL.SqlInsertSingle(tabelGames, fildGames, values);
-                                    dat = SQL.SqlRead("SELECT id_game from Games where game_name = '" + valSQL[0] + "' and game_date = '" + valSQL[1] + "'");
-                                    id_Game = dat.Rows[0][0].ToString(); ;
-                                    valSQL.Clear();
-                                }
-                                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "team"))
-                                {
-                                    values = "";
-                                    while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
-                                    values = "'" + valSQL[0] + "'";
-                                    SQL.SqlInsertSingle(tabelTeams, fildTeams, values);
-                                    dat = SQL.SqlRead("SELECT id_team from Teams where team_name = '" + valSQL[0] + "'");
-                                    id_Team = dat.Rows[0][0].ToString();
-                                    valSQL.Clear();
-                                }
-                                if ((reader.NodeType == XmlNodeType.Element) && (reader.Name == "player"))
-                                {
-                                    while (reader.MoveToNextAttribute()) valSQL.Add(reader.Value);
-                                    values = "'" + id_Game + "', '" + id_Team + "', '" + valSQL[0] + "', '" + valSQL[1] + "', '" + valSQL[2] + "', '" + valSQL[3] + "'";
-                                    SQL.SqlInsertSingle(tabelEvents, fildEvents, values);
-                                    valSQL.Clear();
-                                }
-                                reader.Dispose();
-                            }
-                        }
-                        val.Clear();                     
-
-                        // Выводим  Название URL и размер звуковых файлов
-                        if (jObject["sounds"] != null)
-                        {
-                            MainVal = "";
-                            List<MyTable> result = new List<MyTable>(3);
-                            foreach (var Data in jObject["sounds"])
-                            {
-                                SubVal = (string)Data["name"] + " " + (string)Data["url"] + " " + (string)Data["size"];
-                                val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");                                
-                               
-                                //Добавление композиций в таблицу
-                                result.Add(new MyTable((string)Data["name"], ((int)Data["size"])/1024, (string)Data["url"]));                                
-
-                                if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
-                            }
-                            dataGridSounds.ItemsSource = result;
-
-                            //Если в JSON объекте присутствуют записи о звуковых файлах игр выводим их в нижней форме экрана и заносис в БД laserwar.db таблица Sounds
-                            if (!string.IsNullOrWhiteSpace(MainVal))
-                            {
-                                TextBoxJson.Text += "Sounds:" + Environment.NewLine + MainVal + Environment.NewLine;
-
-                                string tabel = "Sounds";
-                                SQL.TabelDROP(tabel);
-                                string fild = "id_Sound INTEGER PRIMARY KEY AUTOINCREMENT, "
-                                + "name TEXT, "
-                                + "url TEXT, "
-                                + "size INTEGER";
-                                SQL.TabelCreate(tabel, fild);
-                                fild = "name, url, size";
-                                SQL.SqlInsertList(tabel, fild, val);
-
-                            }
-                            val.Clear();
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(TextBoxJson.Text))
-                        {
-                            TextBoxJson.Visibility = Visibility.Visible;
-                            LabelStateDownload.Content = "Файл успешно загружен";
-                        }
-                        else
-                        {
-                            TextBoxJson.Visibility = Visibility.Hidden;
-                            LabelStateDownload.Content = "Файл не содержит необходимых данных";
-                        }
-                        LabelStateDownload.Visibility = Visibility.Visible;
+                            TextBoxJson.Text += "Game url:" + Environment.NewLine + MainVal + Environment.NewLine;
+                        });
+                        keyRef = true;
+                        XMLparce(val);
                     }
-                    else
+                    val.Clear();
+                }
+
+                // Выводим  Название, URL и размер звуковых файлов
+                if (jObject["sounds"] != null)
+                {
+                    MainVal = "";
+                    List<MyTable> result = new List<MyTable>(3);
+                    foreach (var Data in jObject["sounds"])
                     {
-                        TextBoxJson.Visibility = Visibility.Hidden;
-                        LabelStateDownload.Content = "Файл не найден";
-                        LabelStateDownload.Visibility = Visibility.Visible;
+                        //собираем под строку для вывода на форму
+                        SubVal = (string)Data["name"] + " " + (string)Data["url"] + " " + (string)Data["size"];
+                        //собирамем набор строк для последующей загрузки данных в БД
+                        val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
+                        //собираем данные о композициях для последующего добавления их в таблицу
+                        result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
+                        //собираем полную строку для вывода на форму
+                        if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
                     }
+                    //Добавление композиций в таблицу
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        dataGridSounds.ItemsSource = result;
+                    });
+
+                    //Если в JSON объекте присутствуют записи о звуковых файлах выводим их в нижней форме экрана и заносис в БД laserwar.db таблица Sounds
+                    if (!string.IsNullOrWhiteSpace(MainVal))
+                    {
+                        this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                        {
+                            TextBoxJson.Text += "Sounds:" + Environment.NewLine + MainVal + Environment.NewLine;
+                        });
+                        keyRef = true;
+                        string tabel = "Sounds";
+                        SQL.TabelDROP(tabel);
+                        string fild = "id_Sound INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + "name TEXT, "
+                        + "url TEXT, "
+                        + "size INTEGER";
+                        SQL.TabelCreate(tabel, fild);
+                        fild = "name, url, size";
+                        SQL.SqlInsertList(tabel, fild, val);
+
+                    }
+                    val.Clear();
+                }
+                if (keyRef)
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        TextBoxJson.Visibility = Visibility.Visible;
+                        LabelStateDownload.Content = "Файл успешно загружен";
+                    });
+                }
+                else
+                {
+                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                    {
+                        LabelStateDownload.Content = "Файл не содержит необходимых данных";
+                    });
                 }
             }
+            else
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    LabelStateDownload.Content = "Файл не найден";
+                });
+            }
+            //Отображаем статус загрузки данных
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                LabelStateDownload.Visibility = Visibility.Visible;
+            });
+        }
 
+        /// <summary>
+        /// Загрузка объекта JSON
+        /// </summary>
+        private void buttonDownload_Click(object sender, RoutedEventArgs e)
+        {
+            TextBoxJson.Visibility = Visibility.Hidden;
+            LabelStateDownload.Visibility = Visibility.Hidden;
+            TextBoxJson.Text = "";
+            string url = TextBoxAddress.Text;
+            th = new Thread(() =>DovnloadJSON(url));
+            th.Start();
         }
 
         private void dataGridSounds_SelectionChanged(object sender, SelectionChangedEventArgs e)
