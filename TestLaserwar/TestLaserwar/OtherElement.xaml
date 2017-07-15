@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:TestLaserwar">
+
+    <Style x:Key="MainButton" TargetType="Button">
+        <Style.Setters>
+            <Setter Property="BorderBrush" Value="#FF2C2C2C"></Setter>
+            <Setter Property="Background" Value="#FF2C2C2C"></Setter>
+        </Style.Setters>
+        <Style.Triggers>
+            <!--Наведение мыши-->
+            <!--
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="Blue"></Setter>
+                    </Trigger>-->
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="AccessoryButton" TargetType="Button">
+        <Style.Setters>
+            <Setter Property="BorderBrush" Value="Blue"></Setter>
+            <Setter Property="Background" Value="Blue"></Setter>
+            <Setter Property="Foreground" Value="White"></Setter>
+        </Style.Setters>
+    </Style>
+
+    <Style x:Key="LabelMain" TargetType="Label">
+        <Style.Setters>
+            <Setter Property="FontSize" Value="26"></Setter>
+            <Setter Property="Foreground" Value="Black"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        </Style.Setters>
+    </Style>
+
+    <Style x:Key="LabelSub" TargetType="Label">
+        <Style.Setters>
+            <Setter Property="FontSize" Value="13"></Setter>
+            <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+        </Style.Setters>
+    </Style>
+    
+</ResourceDictionary>

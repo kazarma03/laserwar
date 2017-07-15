@@ -8,86 +8,14 @@
         Title="TestLaserwar" Height="750
         " Width="1050" MinHeight="750" MinWidth="1050">
     <Window.Resources>
-        <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Thumb}">
-                        <Grid x:Name="Grid">
-                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
-                            <Border x:Name="Rectangle1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"  Background="{TemplateBinding Background}" />
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Tag" Value="Horizontal">
-                                <Setter TargetName="Rectangle1" Property="Width" Value="Auto" />
-                                <Setter TargetName="Rectangle1" Property="Height" Value="4" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!--ScrollBars-->
-        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
-            <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-            <Setter Property="Foreground" Value="#FF2C2C2C" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Width" Value="10" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollBar}">
-                        <Grid x:Name="GridRoot" Width="5" Background="{TemplateBinding Background}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="0.00001*" />
-                            </Grid.RowDefinitions>
-
-                            <Track x:Name="PART_Track" Grid.Row="0" IsDirectionReversed="true" Focusable="false">
-                                <Track.Thumb>
-                                    <Thumb x:Name="Thumb" Background="{TemplateBinding Foreground}" Style="{DynamicResource ScrollThumbs}" />
-                                </Track.Thumb>
-                                <Track.IncreaseRepeatButton>
-                                    <RepeatButton x:Name="PageUp" Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
-                                </Track.IncreaseRepeatButton>
-                                <Track.DecreaseRepeatButton>
-                                    <RepeatButton x:Name="PageDown" Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
-                                </Track.DecreaseRepeatButton>
-                            </Track>
-                        </Grid>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
-                                <Setter Value="{DynamicResource ButtonSelectBrush}" TargetName="Thumb" Property="Background" />
-                            </Trigger>
-                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
-                                <Setter Value="{DynamicResource DarkBrush}" TargetName="Thumb" Property="Background" />
-                            </Trigger>
-
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed" />
-                            </Trigger>
-                            <Trigger Property="Orientation" Value="Horizontal">
-                                <Setter TargetName="GridRoot" Property="LayoutTransform">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="-90" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter TargetName="PART_Track" Property="LayoutTransform">
-                                    <Setter.Value>
-                                        <RotateTransform Angle="-90" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Width" Value="Auto" />
-                                <Setter Property="Height" Value="12" />
-                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
-                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
-                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <!--<ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ScrollBar.xaml"/>
+                <ResourceDictionary Source="Grid.xaml"/>
+                <ResourceDictionary Source="OtherElement.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!--<ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
             <Border BorderBrush="#FF2C2C2C" Background="#FF2C2C2C" Name="border" >
                 <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"></ContentPresenter>
             </Border>
@@ -110,53 +38,9 @@
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>-->
-        <Style x:Key="MainButton" TargetType="Button">
-            <Style.Setters>
-                <Setter Property="BorderBrush" Value="#FF2C2C2C"></Setter>
-                <Setter Property="Background" Value="#FF2C2C2C"></Setter>
-            </Style.Setters>
-            <Style.Triggers>
-                <!--Наведение мыши-->
-                <!--
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="Blue"></Setter>
-                    </Trigger>-->
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="AccessoryButton" TargetType="Button">
-            <Style.Setters>
-                <Setter Property="BorderBrush" Value="Blue"></Setter>
-                <Setter Property="Background" Value="Blue"></Setter>
-                <Setter Property="Foreground" Value="White"></Setter>
-            </Style.Setters>
-        </Style>
-        <Style x:Key="LabelMain" TargetType="Label">
-            <Style.Setters>
-                <Setter Property="FontSize" Value="20"></Setter>
-                <Setter Property="Foreground" Value="Black"></Setter>
-                <Setter Property="FontWeight" Value="Bold"></Setter>
-                <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-            </Style.Setters>
-        </Style>
-        <Style x:Key="LabelSub" TargetType="Label">
-            <Style.Setters>
-                <Setter Property="FontSize" Value="13"></Setter>
-                <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
-                <Setter Property="FontWeight" Value="Bold"></Setter>
-            </Style.Setters>
-        </Style>
-        <Style x:Key="dataGrid" TargetType="DataGrid">
-            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource res}"></Setter>
-        </Style>
-        <Style x:Key="res" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="White"></Setter>
-            <Setter Property="FontWeight" Value="Bold"></Setter>
-            <Setter Property="Height" Value="70"></Setter>
-            <Setter Property="VerticalAlignment" Value="Top"></Setter>
-            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-        </Style>
-
+        </ResourceDictionary>
     </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" ></ColumnDefinition>
@@ -222,15 +106,78 @@
                 <RowDefinition Height="50"></RowDefinition>
             </Grid.RowDefinitions>
             <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
-            <DataGrid x:Name="dataGridSounds" Style="{DynamicResource dataGrid}" Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" RowHeight="20" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" SelectionChanged="dataGridSounds_SelectionChanged" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
-                <DataGrid.Columns >
-                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Имя файла"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"/>
-                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Размер файла" MinWidth="150" IsReadOnly="True" CanUserResize="False"/>
-                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Загрузка файла" MinWidth="220"/>
-                    <DataGridCheckBoxColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Воспроизвести" MinWidth="220"/>
+            <!--Таблица для вывода звуковых файлов -->
+            <DataGrid x:Name="dataGridSounds" Style="{StaticResource dataGrid}" CellStyle="{StaticResource GridCellsStyle}" RowStyle="{StaticResource GridRowStyle}" RowHeight="40" ItemsSource="{Binding Source=MyList}" Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" SelectionChanged="dataGridSounds_SelectionChanged" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
+                <DataGrid.Columns>
+
+                    <!--Cтолбец Названий композиций -->
+                    <DataGridTextColumn Header="Имя файла" Binding="{Binding Name}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
+                    <!--Cтолбец Размеров файла -->
+                    <!--<DataGridTextColumn Header="Размер файла" Binding="{Binding Size}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>-->
+                    <DataGridTemplateColumn  Header="Размер файл" MinWidth="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="{Binding Size}" Style="{StaticResource LabelGrid}" MinWidth="20"></Label>
+                                    <Label Content="kb" Grid.Column="1" Style="{StaticResource LabelGrid}" Padding="5,0,0,0"></Label>
+                                </StackPanel>
+                            </DataTemplate> 
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!--Скрытый столбец URl -->
+                    <DataGridTextColumn Header="URL" Binding="{Binding URL}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False" Visibility="Hidden"></DataGridTextColumn>
+                    <!--Столбец Загрузки файла -->
+                    <DataGridTemplateColumn  Header="Загрузка файла" MinWidth="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="25"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                    </Grid.RowDefinitions>
+                                    <!--Кнопка загрузки файла -->
+                                    <Button Grid.Column="0" Style="{StaticResource GridButton}" VerticalAlignment="Bottom" Height="20" Width="20">
+                                        <Image Source="resources/downloaded_sound.png" Height="17" Width="17"></Image>
+                                    </Button>
+                                    
+                                    <StackPanel Grid.Column="1" >
+                                        <!--Прогрессор и Label для вывода процентов -->
+                                        <Label  Grid.Row="0" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">50 %</Label>
+                                        <ProgressBar Grid.Row="1" Value="47" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <!--Столбец Воспроизведения файла -->
+                    <DataGridTemplateColumn  Header="Воспроизвести"  MinWidth="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="25"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                    </Grid.RowDefinitions>
+                                    <!--Кнопка запуска остановки файла -->
+                                    <Button Grid.Column="0" Style="{StaticResource GridButton}" VerticalAlignment="Bottom" Height="20" Width="20">
+                                        <Image Source="resources/play_disabled.png" Height="13" Width="13"></Image>
+                                    </Button>
+                                    <StackPanel Grid.Column="1" >
+                                        <!--Прогрессор и Label для вывода времени прослушки композиции -->
+                                        <Label  Grid.Row="0" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False">1:20</Label>
+                                        <ProgressBar Grid.Row="1" Value="47" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
                 </DataGrid.Columns>
             </DataGrid>
-
         </Grid>
         <!--**************-->
         <!--Grid Форма Игра -->

@@ -16,6 +16,8 @@ using System.Data;
 using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace TestLaserwar
 {
@@ -37,6 +39,7 @@ namespace TestLaserwar
         {
             RefMainMenu(true, false, false);
             download.Background = new SolidColorBrush(Colors.Blue);
+
         }
 
         /// <summary>
@@ -83,12 +86,18 @@ namespace TestLaserwar
         {
             RefMainMenu(true, false, false);
         }
-        public class Test
+
+        class MyTable
         {
-            public string FileName { get; set; }
-            public string Size { get; set; }
-            public string State { get; set; }
-            public string Play { get; set; }
+            public MyTable(string Name, int Size, string URL)
+            {
+                this.Name = Name;
+                this.Size = Size;
+                this.URL = URL;
+            }
+            public string Name { get; set; }
+            public int Size { get; set; }
+            public string URL { get; set; }
         }
 
         private void sounds_Click(object sender, RoutedEventArgs e)
@@ -113,10 +122,7 @@ namespace TestLaserwar
             WebClient client = new WebClient();
             JObject jObject;
             string data = null;
-            // вариант 1
-            //Stream stream = client.OpenRead(url);
-            //StreamReader reader = new StreamReader(stream);            
-            //JObject jObject = JObject.Parse(reader.ReadLine());
+
             try
             {
                 data = client.DownloadString(url);
@@ -237,15 +243,19 @@ namespace TestLaserwar
                         if (jObject["sounds"] != null)
                         {
                             MainVal = "";
+                            List<MyTable> result = new List<MyTable>(3);
                             foreach (var Data in jObject["sounds"])
                             {
                                 SubVal = (string)Data["name"] + " " + (string)Data["url"] + " " + (string)Data["size"];
-                                val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
+                                val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");                                
+                               
+                                //Добавление композиций в таблицу
+                                result.Add(new MyTable((string)Data["name"], ((int)Data["size"])/1024, (string)Data["url"]));                                
 
-                                //Test t= new Test { FileName = (string)Data["name"], Size = (string)Data["size"], State = "Test1", Play = "Test2" };
-                                //dataGridSounds.Items.Add(t);
                                 if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
                             }
+                            dataGridSounds.ItemsSource = result;
+
                             //Если в JSON объекте присутствуют записи о звуковых файлах игр выводим их в нижней форме экрана и заносис в БД laserwar.db таблица Sounds
                             if (!string.IsNullOrWhiteSpace(MainVal))
                             {
