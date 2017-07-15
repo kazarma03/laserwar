@@ -78,6 +78,16 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--<Style  x:Key="OnOfDowloadButton" BasedOn="{StaticResource GridButton}" TargetType="Button">
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Source" Value="{x:Null}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Source" Value="#FFBEE6FD"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>-->
 
     <Style x:Key="LabelGrid" TargetType="Label">
         <Style.Setters>

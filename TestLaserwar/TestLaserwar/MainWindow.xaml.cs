@@ -95,7 +95,7 @@ namespace TestLaserwar
 
         private void sounds_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, true, false);            
+            RefMainMenu(false, true, false);
         }
 
         private void games_Click(object sender, RoutedEventArgs e)
@@ -109,7 +109,7 @@ namespace TestLaserwar
         private void CreateDB()
         {
             SQLite SQL = new SQLite();
-            
+
             string tabelGames = "Games";
             SQL.TabelDROP(tabelGames);
             string fildGames = "id_game INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -217,10 +217,10 @@ namespace TestLaserwar
         /// Считываем объект JSON по url парсим его и обрабатываем содержимое
         /// </summary>
         /// <param name="url"> ссылка по которой находиться объект JSON </param>
-        public void DovnloadJSON( string url)
+        public void DovnloadJSON(string url)
         {
             bindSoundTabel.Clear();
-            
+
             //Скрываем интерфейс поиска данных
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
@@ -299,7 +299,7 @@ namespace TestLaserwar
                         val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
                         //собираем данные о композициях для последующего добавления их в таблицу
                         //result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
-                        bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"])); 
+                        bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"], true, Visibility.Hidden, Visibility.Hidden, @"~\..\resources\downloading_sound.png", Visibility.Hidden, Visibility.Hidden, @"~\..\resources\play_disabled.png"));
                         //собираем полную строку для вывода на форму
                         if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
                     }
@@ -370,49 +370,79 @@ namespace TestLaserwar
             LabelStateDownload.Visibility = Visibility.Hidden;
             TextBoxJson.Text = "";
             string url = TextBoxAddress.Text;
-            th = new Thread(() =>DovnloadJSON(url));
+            th = new Thread(() => DovnloadJSON(url));
             th.Start();
         }
-        class SoundTable 
+        class SoundTable
         {
-            public SoundTable(string Name, int Size, string URL)
+            public SoundTable(string Name, int Size, string URL, bool OnOfDowlLoad, Visibility OnOfDownloadProgress, Visibility OnOfPercent, string DownloadPathIcon, Visibility OnOfTimePlay, Visibility OnOfPlayProgress, string PlayPathIcon)
             {
                 this.Name = Name;
                 this.Size = Size;
-                this.URL = URL;                
+                this.URL = URL;
+                this.OnOfDowlLoad = OnOfDowlLoad;
+
+                this.DownloadPathIcon = DownloadPathIcon;
+
+                this.OnOfPercent = OnOfPercent;
+                this.OnOfDownloadProgress = OnOfDownloadProgress;
+
+                this.PlayPathIcon = PlayPathIcon;
+
+                this.OnOfTimePlay = OnOfTimePlay;
+                this.OnOfPlayProgress = OnOfPlayProgress;
             }
+            //@"~\..\resources\downloaded_sound.png"
+            //@"~\..\resources\downloading_sound.png"
+            //@"~\..\resources\play_disabled.png"
+            //@"~\..\resources\play.png"
+            //@"~\..\resources\stop.png"
             public string Name { get; set; }
             public int Size { get; set; }
             public string URL { get; set; }
-            public int DownloadProgress { get; set; }
-            public int PlayProgress { get; set; }
             public int Sel { get; set; }
-            public bool OnOfDowlLoad { get; set; }           
+
+            public bool OnOfDowlLoad { get; set; }
             public Visibility OnOfPercent { get; set; }
- 
+            public string Percent { get; set; }
             public Visibility OnOfDownloadProgress { get; set; }
+            public int DownloadProgress { get; set; }
+            public string DownloadPathIcon { get; set; }
+
+
             public bool OnOfPlay { get; set; }
             public Visibility OnOfTimePlay { get; set; }
+            public string Time { get; set; }
             public Visibility OnOfPlayProgress { get; set; }
+            public int PlayProgress { get; set; }
+            public string PlayPathIcon { get; set; }
         }
 
         List<SoundTable> bindSoundTabel = new List<SoundTable>();
 
+        bool StatePlaySound = false;
+        int indPlaySound;
 
         private void PlaySound_Click(object sender, RoutedEventArgs e)
         {
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
-            bindSoundTabel[ind].DownloadProgress = 70;
-            bindSoundTabel[ind].PlayProgress = 40;
-            bindSoundTabel[ind].OnOfPlay = true;
-            bindSoundTabel[ind].Name = "ooooooooooooooooooooooo" ;
-
-            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
-            bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
-            bindSoundTabel[ind].OnOfTimePlay = Visibility.Hidden;
-            bindSoundTabel[ind].OnOfPlayProgress = Visibility.Hidden;
-
-            dataGridSounds.Items.Refresh();            
+            if (!StatePlaySound)
+            {
+                PlaySound(ind);
+            }
+            else
+            {
+                if (indPlaySound != ind)
+                {
+                    StopSound(indPlaySound);
+                    PlaySound(ind);
+                }
+                else
+                {
+                    StopSound(ind);
+                }
+            }
+            dataGridSounds.Items.Refresh();
         }
 
 
@@ -420,8 +450,52 @@ namespace TestLaserwar
         private void DownloadSound_Click(object sender, RoutedEventArgs e)
         {
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
+            DownloadingSound(ind);
+        }
+
+
+        public void DownloadingSound(int ind)
+        {
+            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Visible;
+            bindSoundTabel[ind].OnOfPercent = Visibility.Visible;
+
+            //Скачиваю файл в отдельном потоке
+
+            //Делаю кнопку загрузки неактивной
+            bindSoundTabel[ind].OnOfDowlLoad = false;
+            //Меняем иконку загрузки на неактивную
+            bindSoundTabel[ind].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
+            //Скрываем прогрессор загрузки
+            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+            //Скрываем проценты загрузки
+            bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
+            //Делаем кнопку проигрывания активной
             bindSoundTabel[ind].OnOfPlay = true;
+            //Меняем иконку проигрывания на активную
+            bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\play.png";
             dataGridSounds.Items.Refresh();
+        }
+
+        public void PlaySound(int ind)
+        {
+            StatePlaySound = true;
+            indPlaySound = ind;
+            //Меняем иконку проигрывания на активную
+            bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\stop.png";
+            bindSoundTabel[ind].OnOfTimePlay = Visibility.Visible;
+            bindSoundTabel[ind].OnOfPlayProgress = Visibility.Visible;
+            //Проигрываем композицию
+
+        }
+
+        public void StopSound(int ind)
+        {
+            //Останавливаем проигрывание композиции
+            StatePlaySound = false;
+            bindSoundTabel[indPlaySound].PlayPathIcon = @"~\..\resources\play.png";
+            bindSoundTabel[indPlaySound].OnOfTimePlay = Visibility.Hidden;
+            bindSoundTabel[indPlaySound].OnOfPlayProgress = Visibility.Hidden;
+
         }
     }
 }
