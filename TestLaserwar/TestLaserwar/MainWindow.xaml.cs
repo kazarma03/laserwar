@@ -46,6 +46,7 @@ namespace TestLaserwar
         }
 
         Thread th;
+        Thread thDownloadSound;
 
         /// <summary>
         /// Обновление форм при переходах
@@ -373,7 +374,7 @@ namespace TestLaserwar
             th = new Thread(() => DovnloadJSON(url));
             th.Start();
         }
-        class SoundTable
+        class SoundTable : INotifyPropertyChanged
         {
             public SoundTable(string Name, int Size, string URL, bool OnOfDowlLoad, Visibility OnOfDownloadProgress, Visibility OnOfPercent, string DownloadPathIcon, Visibility OnOfTimePlay, Visibility OnOfPlayProgress, string PlayPathIcon)
             {
@@ -404,7 +405,21 @@ namespace TestLaserwar
 
             public bool OnOfDowlLoad { get; set; }
             public Visibility OnOfPercent { get; set; }
-            public string Percent { get; set; }
+
+            public string _Percent;
+            public string Percent
+            {
+                get
+                {
+                    return _Percent;
+                }
+                set
+                {
+                    _Percent = value;
+                    OnPropertyChanged("Percent");
+                }
+            }
+
             public Visibility OnOfDownloadProgress { get; set; }
             public int DownloadProgress { get; set; }
             public string DownloadPathIcon { get; set; }
@@ -416,6 +431,14 @@ namespace TestLaserwar
             public Visibility OnOfPlayProgress { get; set; }
             public int PlayProgress { get; set; }
             public string PlayPathIcon { get; set; }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            // Create the OnPropertyChanged method to raise the event
+            protected void OnPropertyChanged(string name)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         List<SoundTable> bindSoundTabel = new List<SoundTable>();
@@ -425,6 +448,7 @@ namespace TestLaserwar
 
         private void PlaySound_Click(object sender, RoutedEventArgs e)
         {
+
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
             if (!StatePlaySound)
             {
@@ -445,35 +469,104 @@ namespace TestLaserwar
             dataGridSounds.Items.Refresh();
         }
 
-
-
         private void DownloadSound_Click(object sender, RoutedEventArgs e)
         {
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
-            DownloadingSound(ind);
+            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Visible;
+            bindSoundTabel[ind].OnOfPercent = Visibility.Visible;
+            dataGridSounds.Items.Refresh();
+
+            th = new Thread(() => DownloadingSound(ind));
+            th.Name= "downloadSound "+ bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+            th.Priority = ThreadPriority.Normal;
+            th.Start();
+             //DownloadingSound(ind);
+        }
+
+        //WebClient client;               // Our WebClient that will be doing the downloading for us
+        Stopwatch sw = new Stopwatch();
+
+        public void DownloadingSound(int ind)
+        {                       
+            using (WebClient client = new WebClient())
+            {
+                client.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
+                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
+               
+                //string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+                // string FilePath = bindSoundTabel[ind].URL;
+                string FilePath = "http://ru.download.nvidia.com/Windows/384.76/384.76-desktop-win10-64bit-international-whql.exe";
+                string FileName = "1.exe";
+                //string FilePath = "http://best-muzon.cc/dl/CZisIgYr9nmLLV9RcFvBRA/1500238531/songs12/2017/01/luis-fonsi-feat.-daddy-yankee-despacito-(best-muzon.cc).mp3";
+                // Start the stopwatch which we will be using to calculate the download speed
+                sw.Start();
+
+                try
+                {
+                    // Start downloading the file
+                    client.DownloadFileAsync(new Uri(FilePath), FileName);
+               
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
 
 
-        public void DownloadingSound(int ind)
+
+        public delegate void UpdateTextCallback(string message);
+
+        // The event that will fire whenever the progress of the WebClient is changed
+        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {                 
+           // Update the progressbar percentage only when the value is not the same.
+           bindSoundTabel[0].DownloadProgress = e.ProgressPercentage;
+           // Show the percentage on our label.
+           bindSoundTabel[0].Percent = e.ProgressPercentage.ToString() + " %  " + string.Format("{0} kb/s", (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0.00"));
+           // Update the label with how much data have been downloaded so far and the total size of the file we are currently downloading
+           // string.Format("{0} MB's / {1} MB's",(e.BytesReceived / 1024d / 1024d).ToString("0.00"),(e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00"));
+           Thread.Sleep(1000);
+         //  this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+          // {
+           //    dataGridSounds.Items.Refresh();
+          // });
+           //System.Threading.Thread.Sleep(1000);
+           //Dispatcher.BeginInvoke((Action)(() => { dataGridSounds.Items.Refresh(); }),
+           //            System.Windows.Threading.DispatcherPriority.Normal, null);
+
+        }
+
+        // The event that will trigger when the WebClient is completed
+        private void Completed(object sender, AsyncCompletedEventArgs e)
         {
-            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Visible;
-            bindSoundTabel[ind].OnOfPercent = Visibility.Visible;
+            // Reset the stopwatch.
+            sw.Reset();
 
-            //Скачиваю файл в отдельном потоке
-
-            //Делаю кнопку загрузки неактивной
-            bindSoundTabel[ind].OnOfDowlLoad = false;
-            //Меняем иконку загрузки на неактивную
-            bindSoundTabel[ind].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
-            //Скрываем прогрессор загрузки
-            bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
-            //Скрываем проценты загрузки
-            bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
-            //Делаем кнопку проигрывания активной
-            bindSoundTabel[ind].OnOfPlay = true;
-            //Меняем иконку проигрывания на активную
-            bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\play.png";
-            dataGridSounds.Items.Refresh();
+            if (e.Cancelled == true)
+            {
+                //MessageBox.Show("Download has been canceled.");
+            }
+            else
+            {
+                //Делаю кнопку загрузки неактивной
+                bindSoundTabel[0].OnOfDowlLoad = false;
+                //Меняем иконку загрузки на неактивную
+                bindSoundTabel[0].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
+                //Скрываем прогрессор загрузки
+                bindSoundTabel[0].OnOfDownloadProgress = Visibility.Hidden;
+                //Скрываем проценты загрузки
+                bindSoundTabel[0].OnOfPercent = Visibility.Hidden;
+                //Делаем кнопку проигрывания активной
+                bindSoundTabel[0].OnOfPlay = true;
+                //Меняем иконку проигрывания на активную
+                bindSoundTabel[0].PlayPathIcon = @"~\..\resources\play.png";
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    dataGridSounds.Items.Refresh();
+                });
+            }
         }
 
         public void PlaySound(int ind)
