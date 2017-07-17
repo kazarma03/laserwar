@@ -2,20 +2,58 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:TestLaserwar">
 
+    <!--Стиль кнопок главного меню-->
     <Style x:Key="MainButton" TargetType="Button">
-        <Style.Setters>
-            <Setter Property="BorderBrush" Value="#FF2C2C2C"></Setter>
-            <Setter Property="Background" Value="#FF2C2C2C"></Setter>
-        </Style.Setters>
+        <Setter Property="BorderBrush" Value="#FF2C2C2C"></Setter>
+        <Setter Property="Background" Value="#FF2C2C2C"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="MyContentPresenter" 
+                                          Content="{TemplateBinding Content}"
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
-            <!--Наведение мыши-->
-            <!--
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="Blue"></Setter>
-                    </Trigger>-->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#FF2C2C2C"></Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="#FFBEE6FD"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
-    
+    <!--Стиль кнопоки Загрузка-->
+    <Style x:Key="MainButtonDownload" BasedOn="{StaticResource MainButton}" TargetType="Button">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=ClickButtonDownLoad}" Value="true">
+                 <Setter Property="Background" Value="Blue" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <!--Стиль кнопоки Звуки-->
+    <Style x:Key="MainButtonSound" BasedOn="{StaticResource MainButton}" TargetType="Button">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=ClickButtonSound}" Value="true">
+                <Setter Property="Background" Value="Blue" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <!--Стиль кнопоки Игры-->
+    <Style x:Key="MainButtonGame" BasedOn="{StaticResource MainButton}" TargetType="Button">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=ClickButtonGame}" Value="true">
+                <Setter Property="Background" Value="Blue" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <!--________________________-->
+
+    <!--Стиль вспомогательных кнопок на формах-->
     <Style x:Key="AccessoryButton" TargetType="Button">
         <Style.Setters>
             <Setter Property="BorderBrush" Value="Blue"></Setter>
@@ -23,7 +61,9 @@
             <Setter Property="Foreground" Value="White"></Setter>
         </Style.Setters>
     </Style>
+    <!--________________________-->
 
+    <!--Стиль лейблов в шапке форм-->
     <Style x:Key="LabelMain" TargetType="Label">
         <Style.Setters>
             <Setter Property="FontSize" Value="26"></Setter>
@@ -32,7 +72,9 @@
             <Setter Property="HorizontalAlignment" Value="Left"></Setter>
         </Style.Setters>
     </Style>
+    <!--________________________-->
 
+    <!--Стиль подзаголовков в формах-->
     <Style x:Key="LabelSub" TargetType="Label">
         <Style.Setters>
             <Setter Property="FontSize" Value="13"></Setter>

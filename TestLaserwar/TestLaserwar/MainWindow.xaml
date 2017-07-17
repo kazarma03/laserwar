@@ -14,36 +14,12 @@
                 <ResourceDictionary Source="Grid.xaml"/>
                 <ResourceDictionary Source="OtherElement.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
-            <!--<ControlTemplate x:Key="ButtonTemplate" TargetType="Button">
-            <Border BorderBrush="#FF2C2C2C" Background="#FF2C2C2C" Name="border" >
-                <ContentPresenter RecognizesAccessKey="True" Margin="{TemplateBinding Padding}"></ContentPresenter>
-            </Border>
-            <ControlTemplate.Triggers>
-                -->
-        <!--Наведение мыши-->
-        <!--
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
-                </Trigger>
-              
-                -->
-        <!--<DataTrigger Binding="{Binding MainButtonkey, Mode=OneWay}" Value="d">
-                    <Setter TargetName="border" Property="Background" Value="Blue"></Setter>
-                </DataTrigger>-->
-        <!--Нажатие мыши-->
-        <!--
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter TargetName="border" Property="Background" Value="#FF5656FF"></Setter>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>-->
         </ResourceDictionary>
     </Window.Resources>
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" ></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
@@ -57,13 +33,13 @@
                 <RowDefinition MinHeight="225"></RowDefinition>
             </Grid.RowDefinitions>
             <!--Кнопки главного меню  -->
-            <Button x:Name="download" Style="{StaticResource MainButton}" Grid.Row="1"  Click="download_Click">
+            <Button x:Name="download" Style="{StaticResource MainButtonDownload}" IsEnabled="{Binding OnOfButtonDownLoad,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"  Click="download_Click">
                 <Image Source="resources/download.png" Height="20" Width="20"></Image>
             </Button>
-            <Button x:Name="sounds" Style="{StaticResource MainButton}" Grid.Row="2" Click="sounds_Click">
+            <Button x:Name="sounds" Style="{StaticResource MainButtonSound}" IsEnabled="{Binding OnOfButtonSound,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Click="sounds_Click">
                 <Image Source="resources/sounds.png" Height="20" Width="20"></Image>
             </Button>
-            <Button x:Name="games" Style="{StaticResource MainButton}" Grid.Row="3" Click="games_Click">
+            <Button x:Name="games" Style="{StaticResource MainButtonGame}" IsEnabled="{Binding OnOfButtonGame,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Click="games_Click">
                 <Image Source="resources/games.png" Height="20" Width="20"></Image>
             </Button>
         </Grid>
@@ -88,7 +64,7 @@
             <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗАГРУЗКА</Label>
             <Label Grid.Row="2" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Адрес файла</Label>
             <TextBox Grid.Row="3" Name="TextBoxAddress" Height="20" Width="350"  BorderBrush="Blue" SelectionBrush="White" BorderThickness="0,0,0,2" Background="White" HorizontalAlignment="Left" Margin="5,0,0,10" Text="https://laserwar.com/testtask/get?dataType=Json" Foreground="#FF2C2C2C"></TextBox>
-            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Name="buttonDownload" Style="{StaticResource AccessoryButton}" Content="ЗАГРУЗИТЬ" FontSize="13" FontWeight="Bold" Height="40" Click="buttonDownload_Click" Margin="0,5,0,0" Width="150"/>
+            <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Name="buttonDownload" Style="{StaticResource AccessoryButton}" Content="ЗАГРУЗИТЬ" IsEnabled="{Binding OnOfDownloadJsonButtton}" FontSize="13" FontWeight="Bold" Height="40" Click="buttonDownload_Click" Margin="0,5,0,0" Width="150"/>
             <Label Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Name="LabelStateDownload" Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
             <TextBox Grid.Row="5" Grid.ColumnSpan="3" Name="TextBoxJson"  BorderBrush="Blue" SelectionBrush="White" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" BorderThickness="0" Background="White" Visibility="Hidden" Foreground="#FF2C2C2C"/>
         </Grid>
@@ -107,7 +83,7 @@
             </Grid.RowDefinitions>
             <Label Grid.Row="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
             <!--Таблица для вывода звуковых файлов -->
-            <DataGrid x:Name="dataGridSounds" SelectedItem="{Binding Path=Sel, Mode=TwoWay}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource GridCellsStyle}" RowStyle="{StaticResource GridRowStyle}" RowHeight="40"  Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
+            <DataGrid x:Name="dataGridSounds" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource GridCellsStyle}" RowStyle="{StaticResource GridRowStyle}" RowHeight="40"  Grid.Row="2" Margin="5,0,0,0" AutoGenerateColumns="False" BorderBrush="{x:Null}" Foreground="#FF2C2C2C" Background="White" AlternatingRowBackground="White"  BorderThickness="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#FFC5C5C5" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserSortColumns="False" HeadersVisibility="Column" HorizontalScrollBarVisibility="Hidden">
                 <DataGrid.Columns>
 
                     <!--Cтолбец Названий композиций -->
@@ -141,7 +117,10 @@
                                     <Button Name="DownloadSound" Grid.Column="0" Style="{StaticResource GridButton}" IsEnabled="{Binding OnOfDowlLoad,  UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="DownloadSound_Click">
                                         <Image Height="16" Width="16" Source="{Binding DownloadPathIcon}"></Image>
                                     </Button>
-                                    
+                                    <StackPanel Grid.Column="1" >
+                                        <!--Label для вывода статуса загрузки файла -->
+                                        <Label Grid.Row="0" Content="Файл загружен" Visibility="{Binding OnOfStateProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,18,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
+                                    </StackPanel>
                                     <StackPanel Grid.Column="1" >
                                         <!--Прогрессор и Label для вывода процентов -->
                                         <Label Grid.Row="0" Content="{Binding Percent, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfDownloadProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
@@ -169,7 +148,7 @@
                                     <StackPanel Grid.Column="1" >
                                         <!--Прогрессор и Label для вывода времени прослушки композиции -->
                                         <Label Grid.Row="0" Visibility="{Binding OnOfTimePlay, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Time, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
-                                        <ProgressBar Name="Time" Value="{Binding PlayProgress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPlayProgress, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                        <ProgressBar Name="Time" Value="{Binding PlayProgress, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding MaxPlayTime, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPlayProgress, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

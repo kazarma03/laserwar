@@ -1,26 +1,15 @@
-﻿using System;
-using System.IO;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Data.SQLite;
-using System.Data;
-using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Threading;
-using System.Windows.Threading;
 using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Net;
+using System.Threading;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Threading;
+using System.Xml;
 
 namespace TestLaserwar
 {
@@ -32,7 +21,7 @@ namespace TestLaserwar
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += MainWindow_Loaded;
+            Loaded += MainWindow_Loaded;          
         }
 
         /// <summary>
@@ -41,12 +30,193 @@ namespace TestLaserwar
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             RefMainMenu(true, false, false);
-            download.Background = new SolidColorBrush(Colors.Blue);
+           // download.Background = new SolidColorBrush(Colors.Blue);
+            
             dataGridSounds.ItemsSource = bindSoundTabel;
+
+            buttonDownload.DataContext = but;
+            download.DataContext = but;
+            sounds.DataContext = but;
+            games.DataContext = but;
+            but.OnOfDownloadJsonButtton = true;
+            but.OnOfButtonDownLoad = true;
+            but.OnOfButtonSound = false;
+            but.OnOfButtonGame = false;
+            but.ClickButtonDownLoad = true;
+            but.ClickButtonSound = false;
+            but.ClickButtonGame = false;
         }
 
+        /// <summary>
+        /// поток в котором выполняется загрузка Json объекта
+        /// </summary>
         Thread th;
-        Thread thDownloadSound;
+
+        /// <summary>
+        /// экземпляр класса с полями для управления повидением кнопок
+        /// </summary>
+        buttons but = new buttons();
+
+        /// <summary>
+        /// класс с полями для управления повидением кнопок
+        /// </summary>
+        class buttons: INotifyPropertyChanged
+        {
+            //активность кнопки загрузки JSON объекта
+            public bool _OnOfDownloadJsonButtton;
+            /// <summary>
+            /// активность кнопки загрузки JSON объекта
+            /// </summary>
+            public bool OnOfDownloadJsonButtton
+            {
+                get
+                {
+                    return _OnOfDownloadJsonButtton;
+                }
+                set
+                {
+                    if (_OnOfDownloadJsonButtton != value)
+                    {
+                        _OnOfDownloadJsonButtton = value;
+                        OnPropertyChanged("OnOfDownloadJsonButtton");
+                    }
+                }
+            }
+
+            //активность кнопки перехода на форму загрузки
+            public bool _OnOfButtonDownLoad;
+            /// <summary>
+            /// активность кнопки перехода на форму загрузки
+            /// </summary>
+            public bool OnOfButtonDownLoad
+            {
+                get
+                {
+                    return _OnOfButtonDownLoad;
+                }
+                set
+                {
+                    if (_OnOfButtonDownLoad != value)
+                    {
+                        _OnOfButtonDownLoad = value;
+                        OnPropertyChanged("OnOfButtonDownLoad");
+                    }
+                }
+            }
+
+            //фон кнопки перехода на форму загрузки
+            public bool _ClickButtonDownLoad;
+            /// <summary>
+            /// фон кнопки перехода на форму загрузки
+            /// </summary>
+            public bool ClickButtonDownLoad
+            {
+                get
+                {
+                    return _ClickButtonDownLoad;
+                }
+                set
+                {
+                    if (_ClickButtonDownLoad != value)
+                    {
+                        _ClickButtonDownLoad = value;
+                        OnPropertyChanged("ClickButtonDownLoad");
+                    }
+                }
+            }
+
+            //активность кнопки перехода на форму звуки
+            public bool _OnOfButtonSound;
+            /// <summary>
+            /// активность кнопки перехода на форму звуки
+            /// </summary>
+            public bool OnOfButtonSound
+            {
+                get
+                {
+                    return _OnOfButtonSound;
+                }
+                set
+                {
+                    if (_OnOfButtonSound != value)
+                    {
+                        _OnOfButtonSound = value;
+                        OnPropertyChanged("OnOfButtonSound");
+                    }
+                }
+            }
+
+            //фон кнопки перехода на форму звуки
+            public bool _ClickButtonSound;
+            /// <summary>
+            /// фон кнопки перехода на форму звуки
+            /// </summary>
+            public bool ClickButtonSound
+            {
+                get
+                {
+                    return _ClickButtonSound;
+                }
+                set
+                {
+                    if (_ClickButtonSound != value)
+                    {
+                        _ClickButtonSound = value;
+                        OnPropertyChanged("ClickButtonSound");
+                    }
+                }
+            }
+
+            // активность кнопки перехода на форму игры
+            public bool _OnOfButtonGame;
+            /// <summary>
+            /// активность кнопки перехода на форму игры
+            /// </summary>
+            public bool OnOfButtonGame
+            {
+                get
+                {
+                    return _OnOfButtonGame;
+                }
+                set
+                {
+                    if (_OnOfButtonGame != value)
+                    {
+                        _OnOfButtonGame = value;
+                        OnPropertyChanged("OnOfButtonGame");
+                    }
+                }
+            }
+
+            // фон кнопки перехода на форму игры
+            public bool _ClickButtonGame;
+            /// <summary>
+            /// фон кнопки перехода на форму игры
+            /// </summary>
+            public bool ClickButtonGame
+            {
+                get
+                {
+                    return _ClickButtonGame;
+                }
+                set
+                {
+                    if (_ClickButtonGame != value)
+                    {
+                        _ClickButtonGame = value;
+                        OnPropertyChanged("ClickButtonGame");
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            // уведомления представления об изменениях свойств объекта
+            protected void OnPropertyChanged(string name)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
 
         /// <summary>
         /// Обновление форм при переходах
@@ -59,32 +229,38 @@ namespace TestLaserwar
             if (dkey)
             {
                 GridDownload.Visibility = Visibility.Visible;
-                download.Background = new SolidColorBrush(Colors.Blue);
+                //  download.Background = new SolidColorBrush(Colors.Blue);
+                but.ClickButtonDownLoad = true;
             }
             else
             {
                 GridDownload.Visibility = Visibility.Hidden;
-                download.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                //  download.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                but.ClickButtonDownLoad = false;
             }
             if (skey)
             {
                 GridSound.Visibility = Visibility.Visible;
-                sounds.Background = new SolidColorBrush(Colors.Blue);
+                //   sounds.Background = new SolidColorBrush(Colors.Blue);
+                but.ClickButtonSound = true;
             }
             else
             {
                 GridSound.Visibility = Visibility.Hidden;
-                sounds.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                //  sounds.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                but.ClickButtonSound = false;
             }
             if (gkey)
             {
                 GridGames.Visibility = Visibility.Visible;
-                games.Background = new SolidColorBrush(Colors.Blue);
+                // games.Background = new SolidColorBrush(Colors.Blue);
+                but.ClickButtonGame = true;
             }
             else
             {
                 GridGames.Visibility = Visibility.Hidden;
-                games.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                //games.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF2C2C2C"));
+                but.ClickButtonGame = false;
             }
         }
 
@@ -92,7 +268,6 @@ namespace TestLaserwar
         {
             RefMainMenu(true, false, false);
         }
-
 
         private void sounds_Click(object sender, RoutedEventArgs e)
         {
@@ -206,22 +381,20 @@ namespace TestLaserwar
             }
         }
 
-        //public class DataItem
-        //{
-        //    public string name { get; set; }
-        //    public int size { get; set; }
-        //    public string URL { get; set; }
-        //    public int DownloadProgress { get; set; }
-        //}
-
         /// <summary>
         /// Считываем объект JSON по url парсим его и обрабатываем содержимое
         /// </summary>
         /// <param name="url"> ссылка по которой находиться объект JSON </param>
         public void DovnloadJSON(string url)
         {
-            bindSoundTabel.Clear();
+            // ------------------ ПОДГОТОВКА ИНТЕРФЕЙСА И ПЕРЕМЕННЫХ ------------------          
 
+            but.OnOfButtonSound = false;
+            but.OnOfButtonGame = false;
+            //очищаем лист экземпляра классов SoundTabel на тот случай если это не первы запуск загрузки
+            bindSoundTabel.Clear();
+            //деинициализируем массив потоков для загрузки звуковых файлов
+            thDownloadSound = null;            
             //Скрываем интерфейс поиска данных
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
@@ -229,6 +402,9 @@ namespace TestLaserwar
                 TextBoxJson.Visibility = Visibility.Hidden;
                 LabelStateDownload.Visibility = Visibility.Hidden;
             });
+
+            // ------------------------------------------------------------------------
+
             WebClient client = new WebClient();
             JObject jObject;
             string data = null;
@@ -300,15 +476,10 @@ namespace TestLaserwar
                         val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
                         //собираем данные о композициях для последующего добавления их в таблицу
                         //result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
-                        bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"], true, Visibility.Hidden, Visibility.Hidden, @"~\..\resources\downloading_sound.png", Visibility.Hidden, Visibility.Hidden, @"~\..\resources\play_disabled.png"));
+                        bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"], true, Visibility.Hidden, Visibility.Hidden, Visibility.Hidden, @"~\..\resources\downloading_sound.png", Visibility.Hidden, Visibility.Hidden, 0, @"~\..\resources\play_disabled.png"));
                         //собираем полную строку для вывода на форму
                         if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
                     }
-                    //Добавление композиций в таблицу
-                    //this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                    //{
-                    //    dataGridSounds.ItemsSource = result;
-                    //});
 
                     //Если в JSON объекте присутствуют записи о звуковых файлах выводим их в нижней форме экрана и заносис в БД laserwar.db таблица Sounds
                     if (!string.IsNullOrWhiteSpace(MainVal))
@@ -337,6 +508,8 @@ namespace TestLaserwar
                     {
                         TextBoxJson.Visibility = Visibility.Visible;
                         LabelStateDownload.Content = "Файл успешно загружен";
+                        but.OnOfButtonSound = true;
+                        but.OnOfButtonGame = true;
                     });
                 }
                 else
@@ -357,26 +530,50 @@ namespace TestLaserwar
             //Отображаем статус загрузки данных
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
-                dataGridSounds.Items.Refresh();
                 LabelStateDownload.Visibility = Visibility.Visible;
+                but.OnOfDownloadJsonButtton = true;
             });
         }
+
 
         /// <summary>
         /// Загрузка объекта JSON
         /// </summary>
         private void buttonDownload_Click(object sender, RoutedEventArgs e)
         {
+            but.OnOfDownloadJsonButtton = false;
             TextBoxJson.Visibility = Visibility.Hidden;
             LabelStateDownload.Visibility = Visibility.Hidden;
+            //до очисктки таблицы останавливаем воспроизведение если оно было активным
+            if (StatePlaySound == true) StopSound();
             TextBoxJson.Text = "";
             string url = TextBoxAddress.Text;
             th = new Thread(() => DovnloadJSON(url));
             th.Start();
         }
+
+        //-------------------------------------------------
+        /// <summary>
+        /// Класс с полями для заполнения таблицы
+        /// </summary>
         class SoundTable : INotifyPropertyChanged
         {
-            public SoundTable(string Name, int Size, string URL, bool OnOfDowlLoad, Visibility OnOfDownloadProgress, Visibility OnOfPercent, string DownloadPathIcon, Visibility OnOfTimePlay, Visibility OnOfPlayProgress, string PlayPathIcon)
+            /// <summary>
+            /// Метод для удобного первоначального заполнения таблицы
+            /// </summary>
+            /// <param name="Name">Имя звукового файла</param>
+            /// <param name="Size">Размер звукового файла</param>
+            /// <param name="URL">URL звукового файла (скрытый столбец, что бы не делать дополнительных запросов в бд)</param>
+            /// <param name="OnOfDowlLoad">статус активности кнопки загрузки звуковых файлов</param>
+            /// <param name="OnOfStateProgress">статус отображения(видимости) лейбла "Файл загружен"</param>
+            /// <param name="OnOfDownloadProgress">статус отображения(видимости) прогрессора загрузки звуковых файлов</param>
+            /// <param name="OnOfPercent">статус отображения(видимости) процентов и скорости загрузки звуковых файлов</param>
+            /// <param name="DownloadPathIcon">путь иконки отображающейся на кнопке загрузки звугового файла</param>
+            /// <param name="OnOfTimePlay">статус отображения(видимости) времени проигрывания звукового файла</param>
+            /// <param name="OnOfPlayProgress"статус отображения(видимости) прогрессора проигрывания звукового файла></param>
+            /// <param name="PlayProgress">значение прогрессора проигрывания звукового файла</param>
+            /// <param name="PlayPathIcon">путь иконки отображающейся на кнопке проигрывания звукового файла</param>
+            public SoundTable(string Name, int Size, string URL, bool OnOfDowlLoad, Visibility OnOfStateProgress, Visibility OnOfDownloadProgress, Visibility OnOfPercent, string DownloadPathIcon, Visibility OnOfTimePlay, Visibility OnOfPlayProgress, double PlayProgress, string PlayPathIcon)
             {
                 this.Name = Name;
                 this.Size = Size;
@@ -384,7 +581,8 @@ namespace TestLaserwar
                 this.OnOfDowlLoad = OnOfDowlLoad;
 
                 this.DownloadPathIcon = DownloadPathIcon;
-
+                
+                this.OnOfStateProgress = OnOfStateProgress;
                 this.OnOfPercent = OnOfPercent;
                 this.OnOfDownloadProgress = OnOfDownloadProgress;
 
@@ -392,21 +590,156 @@ namespace TestLaserwar
 
                 this.OnOfTimePlay = OnOfTimePlay;
                 this.OnOfPlayProgress = OnOfPlayProgress;
+                this.PlayProgress = PlayProgress;
+                this.PlayPathIcon = PlayPathIcon;          
             }
             //@"~\..\resources\downloaded_sound.png"
             //@"~\..\resources\downloading_sound.png"
             //@"~\..\resources\play_disabled.png"
             //@"~\..\resources\play.png"
             //@"~\..\resources\stop.png"
-            public string Name { get; set; }
-            public int Size { get; set; }
-            public string URL { get; set; }
-            public int Sel { get; set; }
 
-            public bool OnOfDowlLoad { get; set; }
-            public Visibility OnOfPercent { get; set; }
+            //Столбец -------------------- ИМЯ ФАЙЛА --------------------
 
+            //Имя звукового файла
+            public string _Name;
+            /// <summary>
+            /// Имя звукового файла
+            /// </summary>
+            public string Name
+            {
+                get
+                {
+                    return _Name;
+                }
+                set
+                {
+                    if (_Name != value)
+                    {
+                        _Name = value;
+                        OnPropertyChanged("Name");
+                    }
+                }
+            }
+
+            //Столбец -------------------- Размер файла --------------------
+
+            //Размер звукового файла
+            public int _Size;
+            /// <summary>
+            /// Размер звукового файла
+            /// </summary>
+            public int Size
+            {
+                get
+                {
+                    return _Size;
+                }
+                set
+                {
+                    if (_Size != value)
+                    {
+                        _Size = value;
+                        OnPropertyChanged("Size");
+                    }
+                }
+            }
+
+            //Столбец -------------------- Скрытый URL --------------------
+
+            //URL звукового файла (скрытый столбец, что бы не делать дополнительных запросов в бд)
+            public string _URL;
+            /// <summary>
+            /// URL звукового файла (скрытый столбец, что бы не делать дополнительных запросов в бд)
+            /// </summary>
+            public string URL
+            {
+                get
+                {
+                    return _URL;
+                }
+                set
+                {
+                    if (_URL != value)
+                    {
+                        _URL = value;
+                        OnPropertyChanged("URL");
+                    }
+                }
+            }
+
+            //Столбец -------------------- Загрузка файла --------------------
+
+            //статус активности кнопки загрузки звуковых файлов
+            public bool _OnOfDowlLoad;
+            /// <summary>
+            /// статус активности кнопки загрузки звуковых файлов
+            /// </summary>
+            public bool OnOfDowlLoad
+            {
+                get
+                {
+                    return _OnOfDowlLoad;
+                }
+                set
+                {
+                    if (_OnOfDowlLoad != value)
+                    {
+                        _OnOfDowlLoad = value;
+                        OnPropertyChanged("OnOfDowlLoad");
+                    }
+                }
+            }
+
+            //------- Лейблы -------
+
+            //статус отображения(видимости) процентов и скорости загрузки звуковых файлов
+            public Visibility _OnOfPercent;
+            /// <summary>
+            /// статус отображения(видимости) процентов и скорости загрузки звуковых файлов
+            /// </summary>
+            public Visibility OnOfPercent
+            {
+                get
+                {
+                    return _OnOfPercent;
+                }
+                set
+                {
+                    if (_OnOfPercent != value)
+                    {
+                        _OnOfPercent = value;
+                        OnPropertyChanged("OnOfPercent");
+                    }
+                }
+            }
+
+            //статус отображения(видимости) лейбла "Файл загружен"
+            public Visibility _OnOfStateProgress;
+            /// <summary>
+            /// статус отображения(видимости) лейбла "Файл загружен"
+            /// </summary>
+            public Visibility OnOfStateProgress
+            {
+                get
+                {
+                    return _OnOfStateProgress;
+                }
+                set
+                {
+                    if (_OnOfStateProgress != value)
+                    {
+                        _OnOfStateProgress = value;
+                        OnPropertyChanged("OnOfStateProgress");
+                    }
+                }
+            }
+
+            //процент загрузки звукового файла и скорость загрузки
             public string _Percent;
+            /// <summary>
+            /// процент загрузки звукового файла и скорость загрузки
+            /// </summary>
             public string Percent
             {
                 get
@@ -415,97 +748,334 @@ namespace TestLaserwar
                 }
                 set
                 {
-                    _Percent = value;
-                    OnPropertyChanged("Percent");
+                    if (_Percent != value)
+                    {
+                        _Percent = value;
+                        OnPropertyChanged("Percent");
+                    }
                 }
             }
 
-            public Visibility OnOfDownloadProgress { get; set; }
-            public int DownloadProgress { get; set; }
-            public string DownloadPathIcon { get; set; }
+            //------- Прогрессор-------
 
+            //статус отображения(видимости) прогрессора загрузки звуковых файлов
+            public Visibility _OnOfDownloadProgress;
+            /// <summary>
+            /// статус отображения(видимости) прогрессора загрузки звуковых файлов
+            /// </summary>
+            public Visibility OnOfDownloadProgress
+            {
+                get
+                {
+                    return _OnOfDownloadProgress;
+                }
+                set
+                {
+                    if (_OnOfDownloadProgress != value)
+                    {
+                        _OnOfDownloadProgress = value;
+                        OnPropertyChanged("OnOfDownloadProgress");
+                    }
+                }
+            }
 
-            public bool OnOfPlay { get; set; }
-            public Visibility OnOfTimePlay { get; set; }
-            public string Time { get; set; }
-            public Visibility OnOfPlayProgress { get; set; }
-            public int PlayProgress { get; set; }
-            public string PlayPathIcon { get; set; }
+            //значение прогрессора загрузки звуковых файлов
+            public int _DownloadProgress;
+            /// <summary>
+            /// значение прогрессора загрузки звуковых файлов
+            /// </summary>
+            public int DownloadProgress
+            {
+                get
+                {
+                    return _DownloadProgress;
+                }
+                set
+                {
+                    if (_DownloadProgress != value)
+                    {
+                        _DownloadProgress = value;
+                        OnPropertyChanged("DownloadProgress");
+                    }
+                }
+            }
+
+            //путь иконки отображающейся на кнопке загрузки звугового файла
+            public string _DownloadPathIcon;
+            /// <summary>
+            /// путь иконки отображающейся на кнопке загрузки звугового файла
+            /// </summary>
+            public string DownloadPathIcon
+            {
+                get
+                {
+                    return _DownloadPathIcon;
+                }
+                set
+                {
+                    if (_DownloadPathIcon != value)
+                    {
+                        _DownloadPathIcon = value;
+                        OnPropertyChanged("DownloadPathIcon");
+                    }
+                }
+            }
+
+            //Столбец -------------------- Воспроизвести --------------------            
+            //статус активности кнопки проигрывания звуковых файлов
+            public bool _OnOfPlay;
+            /// <summary>
+            /// статус активности кнопки проигрывания звуковых файлов
+            /// </summary>
+            public bool OnOfPlay
+            {
+                get
+                {
+                    return _OnOfPlay;
+                }
+                set
+                {
+                    if (_OnOfPlay != value)
+                    {
+                        _OnOfPlay = value;
+                        OnPropertyChanged("OnOfPlay");
+                    }
+                }
+            }
+
+            //------- Лейблы -------
+
+            //статус отображения(видимости) времени проигрывания звукового файла
+            public Visibility _OnOfTimePlay;
+            /// <summary>
+            /// статус отображения(видимости) времени проигрывания звукового файла
+            /// </summary>
+            public Visibility OnOfTimePlay
+            {
+                get
+                {
+                    return _OnOfTimePlay;
+                }
+                set
+                {
+                    if (_OnOfTimePlay != value)
+                    {
+                        _OnOfTimePlay = value;
+                        OnPropertyChanged("OnOfTimePlay");
+                    }
+                }
+            }
+
+            //время проигрывания звукового файла
+            public string _Time;
+            /// <summary>
+            /// время проигрывания звукового файла
+            /// </summary>
+            public string Time
+            {
+                get
+                {
+                    return _Time;
+                }
+                set
+                {
+                    if (_Time != value)
+                    {
+                        _Time = value;
+                        OnPropertyChanged("Time");
+                    }
+                }
+            }
+
+            //------- Прогрессор-------
+
+            //статус отображения(видимости) прогрессора проигрывания звукового файла
+            public Visibility _OnOfPlayProgress;
+            /// <summary>
+            /// статус отображения(видимости) прогрессора проигрывания звукового файла
+            /// </summary>
+            public Visibility OnOfPlayProgress
+            {
+                get
+                {
+                    return _OnOfPlayProgress;
+                }
+                set
+                {
+                    if (_OnOfPlayProgress != value)
+                    {
+                        _OnOfPlayProgress = value;
+                        OnPropertyChanged("OnOfPlayProgress");
+                    }
+                }
+            }
+
+            //значение прогрессора проигрывания звукового файла
+            public double _PlayProgress;
+            /// <summary>
+            /// значение прогрессора проигрывания звукового файла
+            /// </summary>
+            public double PlayProgress
+            {
+                get
+                {
+                    return _PlayProgress;
+                }
+                set
+                {
+                    if (_PlayProgress != value)
+                    {
+                        _PlayProgress = value;
+                        OnPropertyChanged("PlayProgress");
+                    }
+                }
+            }
+
+            //максимальное значение прогрессора проигрывания звукового файла
+            public double _MaxPlayTime;
+            /// <summary>
+            /// максимальное значение прогрессора проигрывания звукового файла
+            /// </summary>
+            public double MaxPlayTime
+            {
+                get
+                {
+                    return _MaxPlayTime;
+                }
+                set
+                {
+                    if (_MaxPlayTime != value)
+                    {
+                        _MaxPlayTime = value;
+                        OnPropertyChanged("MaxPlayTime");
+                    }
+                }
+            }
+
+            //путь иконки отображающейся на кнопке проигрывания звукового файла
+            public string _PlayPathIcon;
+            /// <summary>
+            /// путь иконки отображающейся на кнопке проигрывания звукового файла
+            /// </summary>
+            public string PlayPathIcon
+            {
+                get
+                {
+                    return _PlayPathIcon;
+                }
+                set
+                {
+                    if (_PlayPathIcon != value)
+                    {
+                        _PlayPathIcon = value;
+                        OnPropertyChanged("PlayPathIcon");
+                    }
+                }
+            }
 
             public event PropertyChangedEventHandler PropertyChanged;
 
-            // Create the OnPropertyChanged method to raise the event
+            // уведомления представления об изменениях свойств объекта.
             protected void OnPropertyChanged(string name)
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+               PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             }
         }
 
+        /// <summary>
+        /// Лист экземпляров класса SoundTable для удобного обращения к ячейкам таблицы звуков
+        /// </summary>
         List<SoundTable> bindSoundTabel = new List<SoundTable>();
-
+        /// <summary>
+        /// Статус проигрывания звукового файла, false - не проигрывается, true - проигрывается
+        /// </summary>
         bool StatePlaySound = false;
+        /// <summary>
+        /// индекс текущей проигрываемой мелодии
+        /// </summary>
         int indPlaySound;
 
+        /// <summary>
+        /// событие - нажатие кнопки в столбце воспроизведение
+        /// </summary>
         private void PlaySound_Click(object sender, RoutedEventArgs e)
         {
 
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
+            // если в тукущий момент ничего не воспроизводиться
             if (!StatePlaySound)
             {
                 PlaySound(ind);
             }
             else
-            {
+            {               
                 if (indPlaySound != ind)
                 {
-                    StopSound(indPlaySound);
+                    //если в текущий момент воспроизводится звуковой файл и мы пытаемся запустить другой файл
+                    StopSound();
                     PlaySound(ind);
                 }
                 else
                 {
-                    StopSound(ind);
+                    //если в текущий момент воспроизводится звуковой файл и мы пытаемся остановить воспроизведение текущего файла
+                    StopSound();
                 }
             }
-            dataGridSounds.Items.Refresh();
         }
 
+        /// <summary>
+        /// массив потоков загружающих звуковые композиции
+        /// </summary>
+        Thread[] thDownloadSound;
+
+        /// <summary>
+        /// событие - нажатие кнопки в столбце Загрузка файла
+        /// </summary>
         private void DownloadSound_Click(object sender, RoutedEventArgs e)
         {
+            //Определяем индекс текущего элемента с которым осуществляется взаимодействие
             int ind = dataGridSounds.Items.IndexOf(dataGridSounds.CurrentItem);
+            //Отображаем интерфейс скачивания звукового файла
+            bindSoundTabel[ind].OnOfDowlLoad = false;
             bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Visible;
             bindSoundTabel[ind].OnOfPercent = Visibility.Visible;
-            dataGridSounds.Items.Refresh();
 
-            th = new Thread(() => DownloadingSound(ind));
-            th.Name= "downloadSound "+ bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
-            th.Priority = ThreadPriority.Normal;
-            th.Start();
-             //DownloadingSound(ind);
+            // при первом запуске первого скачиваемого файла инициализируем массив потоков, определяя размерность по колличеству строк в таблице звуковых файлов
+            if (thDownloadSound == null) thDownloadSound = new Thread[dataGridSounds.Items.Count];
+
+            // запускаем новый поток скачивания звукового файла
+            thDownloadSound[ind] = new Thread(() => DownloadingSound(ind));
+            thDownloadSound[ind].Name = "downloadSound " + bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+            thDownloadSound[ind].Priority = ThreadPriority.Normal;
+            thDownloadSound[ind].Start();
+
         }
 
-        //WebClient client;               // Our WebClient that will be doing the downloading for us
-        Stopwatch sw = new Stopwatch();
-
+        /// <summary>
+        /// метод загрузки звукового файла в отдельном потоке
+        /// </summary>
+        /// <param name="ind"> индекс текущего обрабатываемого элемента</param>
         public void DownloadingSound(int ind)
         {                       
             using (WebClient client = new WebClient())
             {
-                client.DownloadFileCompleted += new AsyncCompletedEventHandler(Completed);
-                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(ProgressChanged);
-               
-                //string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
-                // string FilePath = bindSoundTabel[ind].URL;
-                string FilePath = "http://ru.download.nvidia.com/Windows/384.76/384.76-desktop-win10-64bit-international-whql.exe";
-                string FileName = "1.exe";
-                //string FilePath = "http://best-muzon.cc/dl/CZisIgYr9nmLLV9RcFvBRA/1500238531/songs12/2017/01/luis-fonsi-feat.-daddy-yankee-despacito-(best-muzon.cc).mp3";
-                // Start the stopwatch which we will be using to calculate the download speed
-                sw.Start();
+                Stopwatch sw = new Stopwatch();
+                sw.Reset();
+                //создание и перегрузка события завершения загрузки асинхронного загрузчика
+                client.DownloadFileCompleted += new AsyncCompletedEventHandler((sender, e) => Completed(sender, e, ind));
+                //создание и перегрузка события изменения состояния загрузки асинхронного загрузчика
+                client.DownloadProgressChanged += new DownloadProgressChangedEventHandler((sender, e) => ProgressChanged(sender, e, ind, sw));
 
+                string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+                string FilePath = bindSoundTabel[ind].URL;
+                //string FilePath = "http://ru.download.nvidia.com/Windows/384.76/384.76-desktop-win10-64bit-international-whql.exe";
+                //string FilePath = "http://best-muzon.cc/dl/CZisIgYr9nmLLV9RcFvBRA/1500238531/songs12/2017/01/luis-fonsi-feat.-daddy-yankee-despacito-(best-muzon.cc).mp3";
+                // Запуск Stopwatch для дальнейшего расчета скорости загрузки файла
+                sw.Start();
                 try
                 {
-                    // Start downloading the file
-                    client.DownloadFileAsync(new Uri(FilePath), FileName);
-               
+                    // начинаем загрузку файла асинхронно
+                    client.DownloadFileAsync(new Uri(FilePath), FileName);               
                 }
                 catch (Exception ex)
                 {
@@ -515,80 +1085,142 @@ namespace TestLaserwar
         }
 
 
-
-        public delegate void UpdateTextCallback(string message);
-
-        // The event that will fire whenever the progress of the WebClient is changed
-        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {                 
-           // Update the progressbar percentage only when the value is not the same.
-           bindSoundTabel[0].DownloadProgress = e.ProgressPercentage;
-           // Show the percentage on our label.
-           bindSoundTabel[0].Percent = e.ProgressPercentage.ToString() + " %  " + string.Format("{0} kb/s", (e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds).ToString("0.00"));
-           // Update the label with how much data have been downloaded so far and the total size of the file we are currently downloading
-           // string.Format("{0} MB's / {1} MB's",(e.BytesReceived / 1024d / 1024d).ToString("0.00"),(e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00"));
-           Thread.Sleep(1000);
-         //  this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-          // {
-           //    dataGridSounds.Items.Refresh();
-          // });
-           //System.Threading.Thread.Sleep(1000);
-           //Dispatcher.BeginInvoke((Action)(() => { dataGridSounds.Items.Refresh(); }),
-           //            System.Windows.Threading.DispatcherPriority.Normal, null);
-
+        // Событие изменения асинхронного загрузчика файлов
+        /// <summary>
+        /// Событие изменения асинхронного загрузчика файлов
+        /// </summary>
+        /// <param name="ind">Индекс текущего обрабатываемого элемента</param>
+        /// <param name="sw">Stopwatch для расчета скорости загрузки файла</param>
+        private void ProgressChanged(object sender, DownloadProgressChangedEventArgs e, int ind, Stopwatch sw)
+        {           
+            // Обновляем прогресс бар загрузки файла.
+            bindSoundTabel[ind].DownloadProgress = e.ProgressPercentage;
+            // Считаем скорость загрузки файла
+            double speed = e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds;            
+            string STRspeed;
+            if (speed > 1024)
+            {
+                speed = speed / 1024;
+                STRspeed = string.Format("{0} Mb/s", (speed).ToString("0.00"));
+            }
+            else
+            {
+                STRspeed = string.Format("{0} kb/s", (speed).ToString("0.00"));
+            }
+            //выводим процент загрузки файла и скорость
+            bindSoundTabel[ind].Percent = e.ProgressPercentage.ToString() + " %  " + STRspeed;
+            // string.Format("{0} MB's / {1} MB's",(e.BytesReceived / 1024d / 1024d).ToString("0.00"),(e.TotalBytesToReceive / 1024d / 1024d).ToString("0.00"));
         }
 
-        // The event that will trigger when the WebClient is completed
-        private void Completed(object sender, AsyncCompletedEventArgs e)
+        // Событие завершения работы асинхронного загрузчика файлов
+        /// <summary>
+        /// Событие завершения работы асинхронного загрузчика файлов
+        /// </summary>
+        /// <param name="ind">Индекс текущего обрабатываемого элемента</param>
+        private void Completed(object sender, AsyncCompletedEventArgs e, int ind)
         {
-            // Reset the stopwatch.
-            sw.Reset();
-
             if (e.Cancelled == true)
             {
+                //tесли было принудительное завершение загрузки файла
                 //MessageBox.Show("Download has been canceled.");
             }
             else
             {
+                //отображаем лейбл "Файл загружен"
+                bindSoundTabel[ind].OnOfStateProgress = Visibility.Visible;
                 //Делаю кнопку загрузки неактивной
-                bindSoundTabel[0].OnOfDowlLoad = false;
+                bindSoundTabel[ind].OnOfDowlLoad = false;
                 //Меняем иконку загрузки на неактивную
-                bindSoundTabel[0].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
+                bindSoundTabel[ind].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
                 //Скрываем прогрессор загрузки
-                bindSoundTabel[0].OnOfDownloadProgress = Visibility.Hidden;
+                bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
                 //Скрываем проценты загрузки
-                bindSoundTabel[0].OnOfPercent = Visibility.Hidden;
+                bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
                 //Делаем кнопку проигрывания активной
-                bindSoundTabel[0].OnOfPlay = true;
+                bindSoundTabel[ind].OnOfPlay = true;
                 //Меняем иконку проигрывания на активную
-                bindSoundTabel[0].PlayPathIcon = @"~\..\resources\play.png";
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                {
-                    dataGridSounds.Items.Refresh();
-                });
+                bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\play.png";
             }
         }
 
+        /// <summary>
+        /// екземпляр MediaPlayer для проигрывания звукового файла
+        /// </summary>
+        private MediaPlayer player = new MediaPlayer();
+        /// <summary>
+        /// Таймер для визуализации процесса проигрывания звукового файла и завершения проигрывания
+        /// </summary>
+        DispatcherTimer timer;
+
+        /// <summary>
+        /// Проигрывание звукового файлв
+        /// </summary>
+        /// <param name="ind">Индекс текущего проигрываемого элемента</param>
         public void PlaySound(int ind)
         {
+            // инициализируем интерфейс проигрывания звукового файла
+            bindSoundTabel[ind].PlayProgress = 0;
+            bindSoundTabel[ind].Time = "0:00";
+            bindSoundTabel[ind].MaxPlayTime = 1000;
+
+            timer = new DispatcherTimer();
+            //задаем интервал срабатывания таймера для плавности отображения изменений интерфейса
+            timer.Interval = TimeSpan.FromSeconds(0.01);
+            timer.Tick += new EventHandler(timer_Tick);
+            // timer.Tick += new EventHandler((sender, e) => timer_Tick(sender, e, ind));
+            timer.Start();
+
             StatePlaySound = true;
+            //запоминием текущий индекс проигрываемого файла для обновления интерфейса в таймере
             indPlaySound = ind;
-            //Меняем иконку проигрывания на активную
+
+            // bindSoundTabel[ind].PlayProgress = 0;
+            // bindSoundTabel[ind].Time = "0:00";            
+            //Меняем иконку проигрывания на активную           
             bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\stop.png";
             bindSoundTabel[ind].OnOfTimePlay = Visibility.Visible;
             bindSoundTabel[ind].OnOfPlayProgress = Visibility.Visible;
+            
+            string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+            player.Open(new Uri(FileName, UriKind.Relative));
             //Проигрываем композицию
-
+            player.Play();
         }
 
-        public void StopSound(int ind)
+        /// <summary>
+        /// Событие срабатывающее по таймеру каждые 0.01 сек для обновления интерфейса при проигрывании
+        /// </summary>
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if ((player.Source != null) && (player.NaturalDuration.HasTimeSpan))
+            {
+                bindSoundTabel[indPlaySound].MaxPlayTime = player.NaturalDuration.TimeSpan.TotalSeconds;
+                bindSoundTabel[indPlaySound].Time= TimeSpan.FromSeconds(player.Position.TotalSeconds).ToString(@"m\:ss"); ;
+                bindSoundTabel[indPlaySound].PlayProgress = player.Position.TotalSeconds;
+
+                if (bindSoundTabel[indPlaySound].MaxPlayTime == bindSoundTabel[indPlaySound].PlayProgress)
+                {
+                    //композиция полностью проиграна, производим остановку
+                    StopSound();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Остановка проигрывания композиции
+        /// </summary>
+        /// <param name="ind">индекс текущей проигрываемой композиции</param>
+        public void StopSound()
         {
             //Останавливаем проигрывание композиции
             StatePlaySound = false;
             bindSoundTabel[indPlaySound].PlayPathIcon = @"~\..\resources\play.png";
             bindSoundTabel[indPlaySound].OnOfTimePlay = Visibility.Hidden;
             bindSoundTabel[indPlaySound].OnOfPlayProgress = Visibility.Hidden;
-
+            player.Stop();
+            // останавливаем таймер
+            timer.Stop();
         }
+
     }
 }

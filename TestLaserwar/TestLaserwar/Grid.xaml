@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:TestLaserwar">
-
+    <!--Стиль заголовков в таблице-->    
     <Style x:Key="dataGrid" TargetType="DataGrid">
         <Setter Property="ColumnHeaderStyle" Value="{DynamicResource GridHeader}"></Setter>
     </Style>
@@ -13,17 +13,21 @@
         <Setter Property="VerticalAlignment" Value="Top"></Setter>
         <Setter Property="HorizontalAlignment" Value="Left"></Setter>
     </Style>
+    <!--________________________-->
 
+    <!--Стиль ячеек в таблице, убираем выделения-->
     <Style x:Key="GridCellsStyle" TargetType="DataGridCell">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="White" />
-                <Setter Property="Foreground" Value="#FF2C2C2C" />
+                <Setter Property="Foreground" Value="Green" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--________________________-->
 
+    <!--Стиль строк в таблице, убираем выделения-->
     <Style x:Key="GridRowStyle" TargetType="DataGridRow">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
@@ -33,22 +37,16 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--________________________-->
 
+    <!--Стиль DataGridTextColumn-->
     <Style x:Key="GridTetxBlock" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
     </Style>
-    
-    <!--<Style x:Key="GridButton" TargetType="Button">
-        <Style.Setters>
-            <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
-            <Setter Property="Background" Value="{x:Null}"></Setter>
-            <Setter Property="Width" Value="20"></Setter>
-            <Setter Property="Height" Value="20"></Setter>
-            <Setter Property="Margin" Value="0,0,0,1"></Setter>
-        </Style.Setters>
-    </Style>-->
+    <!--________________________-->
 
+    <!--Стиль кнопок в таблице-->
     <Style x:Key="GridButton" TargetType="Button">
         <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
         <Setter Property="Background" Value="{x:Null}"></Setter>
@@ -78,17 +76,9 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <!--<Style  x:Key="OnOfDowloadButton" BasedOn="{StaticResource GridButton}" TargetType="Button">
-        <Style.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Source" Value="{x:Null}"/>
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="false">
-                <Setter Property="Source" Value="#FFBEE6FD"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>-->
+    <!--________________________-->
 
+    <!--Стиль лейблов в таблице-->
     <Style x:Key="LabelGrid" TargetType="Label">
         <Style.Setters>
             <Setter Property="FontSize" Value="12"></Setter>
