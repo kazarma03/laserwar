@@ -8,17 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/back.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/download.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/downloaded_sound.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/downloading_sound.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/download_sound.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/games.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/hide%20show.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/play.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/play_disabled.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/sort.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/sounds.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resourses/stop.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/show.png")]
 
 

@@ -4,6 +4,23 @@
     <!--Стиль заголовков в таблице-->    
     <Style x:Key="dataGrid" TargetType="DataGrid">
         <Setter Property="ColumnHeaderStyle" Value="{DynamicResource GridHeader}"></Setter>
+        <Setter Property="RowHeight" Value="40"></Setter>
+        <Setter Property="Margin" Value="5,0,0,0"></Setter>
+        <Setter Property="AutoGenerateColumns" Value="False"></Setter>
+        <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
+        <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="AlternatingRowBackground" Value="White"></Setter>
+        <Setter Property="BorderThickness" Value="0"></Setter>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"></Setter>
+        <Setter Property="HorizontalGridLinesBrush" Value="#FFC5C5C5"></Setter>
+        <Setter Property="CanUserAddRows" Value="False"></Setter>
+        <Setter Property="CanUserDeleteRows" Value="False"></Setter>
+        <Setter Property="CanUserReorderColumns" Value="False"></Setter>
+        <Setter Property="CanUserResizeColumns" Value="False"></Setter>
+        <Setter Property="CanUserSortColumns" Value="False"></Setter>
+        <Setter Property="HeadersVisibility" Value="Column"></Setter>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"></Setter>
     </Style>
 
     <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
@@ -13,18 +30,72 @@
         <Setter Property="VerticalAlignment" Value="Top"></Setter>
         <Setter Property="HorizontalAlignment" Value="Left"></Setter>
     </Style>
+
+    <Style x:Key="dataGridDetail" TargetType="DataGrid">
+        <Setter Property="ColumnHeaderStyle" Value="{DynamicResource GridHeaderDetail}"></Setter>
+        <Setter Property="RowHeight" Value="40"></Setter>
+        <Setter Property="Margin" Value="5,0,0,0"></Setter>
+        <Setter Property="AutoGenerateColumns" Value="False"></Setter>
+        <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
+        <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="AlternatingRowBackground" Value="White"></Setter>
+        <Setter Property="BorderThickness" Value="0"></Setter>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"></Setter>
+        <Setter Property="HorizontalGridLinesBrush" Value="#FFC5C5C5"></Setter>
+        <Setter Property="CanUserAddRows" Value="False"></Setter>
+        <Setter Property="CanUserDeleteRows" Value="False"></Setter>
+        <Setter Property="CanUserReorderColumns" Value="False"></Setter>
+        <Setter Property="CanUserResizeColumns" Value="False"></Setter>
+        <Setter Property="CanUserSortColumns" Value="True"></Setter>
+        <Setter Property="HeadersVisibility" Value="Column"></Setter>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Hidden"></Setter>
+        <Setter Property="SelectionUnit" Value="Cell"></Setter>
+    </Style>
+    <Style x:Key="GridHeaderDetail" TargetType="DataGridColumnHeader">
+        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="FontWeight" Value="Bold"></Setter>
+        <Setter Property="Height" Value="75"></Setter>
+        <Setter Property="VerticalAlignment" Value="Top"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+    </Style>
     <!--________________________-->
 
     <!--Стиль ячеек в таблице, убираем выделения-->
-    <Style x:Key="GridCellsStyle" TargetType="DataGridCell">
+    <Style x:Key="DataGridCells" TargetType="DataGridCell">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
                 <Setter Property="Background" Value="White" />
-                <Setter Property="Foreground" Value="Green" />
+                <Setter Property="Foreground" Value="#FF2C2C2C" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style x:Key="DataGridCellsGame" TargetType="DataGridCell">
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="Blue" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style x:Key="DataGridCellsDetail" TargetType="DataGridCell">
+        <Style.Triggers>
+            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="#FF2C2C2C" />
+                <Setter Property="BorderThickness" Value="0 0 0 2" />
+                <Setter Property="BorderBrush" Value="Blue" />
+                <!--<Setter Property="FrameworkElement.HorizontalAlignment" Value="Left"></Setter>-->
+                <Setter Property="FrameworkElement.VerticalAlignment" Value="Bottom"></Setter>
+                <!--<Setter Property="BorderBrush" Value="{x:Null}" />-->
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!--________________________-->
 
     <!--Стиль строк в таблице, убираем выделения-->

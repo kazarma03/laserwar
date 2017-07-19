@@ -96,6 +96,25 @@ namespace TestLaserwar
         }
 
         /// <summary>
+        /// Конструктор SQL запросов update
+        /// </summary>
+        /// <param name="tabel"> Имя таблицы БД </param>
+        /// <param name="fild"> Строка содержащая поле "," </param>
+        /// <param name="val"> значение "," </param>
+        /// <param name="condition"> условие "," </param>
+        /// <returns> true строки изменены, false зафиксировано 0 изменений </returns>
+        public bool SqlUpdateSinglefield(string tabel, string fild, string val, string condition)
+        {
+            SQLiteConnection conn = SqlConnect(SqlConStr);
+            string SqlCommand = "Update " + tabel + " set " + fild + "= '" + val + "' Where " + condition;
+
+            int key = ExecNonQuery(SqlCommand, conn);
+            SqlCloseConnect(conn, false);
+            if (key > 0) return true;
+            else return false;
+        }
+
+        /// <summary>
         /// Конструктор SQL запросов NSERT
         /// </summary>
         /// <param name="tabel"> Имя таблицы БД </param>

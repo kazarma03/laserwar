@@ -46,3 +46,19 @@ class SoundTable - сильно разросся, были добавлены комментарии методов и полей.
 Полностью описана логика проигрывания звуковых файлов. Для обновления интерфейса во времы проигрывания был выбран вариант использования DispatcherTimer. Вариант не нравится, но работает.
 Для проигрывания созданы методы:void PlaySound(int ind), timer_Tick(object sender, EventArgs e), void StopSound(). Предусмотрен вариант проверки проигрывания файла 
 при повторной загрузке Json объекта и отключения проигрывания при необходимости.
+
+Изменения 19.07
+Созданы:
+class GameTable -с полями для заполнения таблицы Игр
+Метод static DateTime UnixTimeStampToDateTime(double unixTimeStamp) -для преобразования Unix времени
+Организован переход по двойному нажатию на строке в таблице Игр к форме детализации игр
+сlass DetailGameTable - с полями для заполнения таблицы Игр
+class LabelDetailGameTable -с полем для привязки к Заголовку формы детализации игр
+стиль GroupHeaderStyle- для организации группировки в таблице детализации игр
+стиль dataGridDetail - для визуализации таблицы детализации игр
+void Return_Click(object sender, RoutedEventArgs e)- для логики возвращения на таблицу игр
+посредством методов void dataGridDetailGame_PreparingCellForEdit(object sender, System.Windows.Controls.DataGridPreparingCellForEditEventArgs e)
+                  и void dataGridDetailGame_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+реализовано обновление БД при редактировании данных в ячейке. 
+В dataGridDetailGame_CellEditEnding предусмотрено преобразование точности Accuracy: в таблице текст + " %", в бд десятичное значение с разделителем в виде, все остальные символя автоматически удаляются.
+

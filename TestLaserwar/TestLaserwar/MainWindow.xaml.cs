@@ -7,9 +7,13 @@ using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Controls;
+using System.Text.RegularExpressions;
 using System.Xml;
+using System.Collections.ObjectModel;
 
 namespace TestLaserwar
 {
@@ -30,9 +34,10 @@ namespace TestLaserwar
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             RefMainMenu(true, false, false);
-           // download.Background = new SolidColorBrush(Colors.Blue);
             
             dataGridSounds.ItemsSource = bindSoundTabel;
+            dataGridGame.ItemsSource =bindGameTabel;
+            DetailGame.DataContext = LabelDetail;
 
             buttonDownload.DataContext = but;
             download.DataContext = but;
@@ -44,7 +49,7 @@ namespace TestLaserwar
             but.OnOfButtonGame = false;
             but.ClickButtonDownLoad = true;
             but.ClickButtonSound = false;
-            but.ClickButtonGame = false;
+            but.ClickButtonGame = false;            
         }
 
         /// <summary>
@@ -229,6 +234,7 @@ namespace TestLaserwar
             if (dkey)
             {
                 GridDownload.Visibility = Visibility.Visible;
+                GridGamesDetail.Visibility = Visibility.Hidden;
                 //  download.Background = new SolidColorBrush(Colors.Blue);
                 but.ClickButtonDownLoad = true;
             }
@@ -241,6 +247,7 @@ namespace TestLaserwar
             if (skey)
             {
                 GridSound.Visibility = Visibility.Visible;
+                GridGamesDetail.Visibility = Visibility.Hidden;
                 //   sounds.Background = new SolidColorBrush(Colors.Blue);
                 but.ClickButtonSound = true;
             }
@@ -253,6 +260,7 @@ namespace TestLaserwar
             if (gkey)
             {
                 GridGames.Visibility = Visibility.Visible;
+                GridGamesDetail.Visibility = Visibility.Hidden;
                 // games.Background = new SolidColorBrush(Colors.Blue);
                 but.ClickButtonGame = true;
             }
@@ -277,6 +285,7 @@ namespace TestLaserwar
         private void games_Click(object sender, RoutedEventArgs e)
         {
             RefMainMenu(false, false, true);
+            GetGameData();
         }
 
         /// <summary>
@@ -308,7 +317,7 @@ namespace TestLaserwar
 
             string tabelEvents = "Events";
             SQL.TabelDROP(tabelEvents);
-            string fildEvents = "id_event INTEGER PRIMARY KEY AUTOINCREMENT, "
+            string fildEvents = "id INTEGER PRIMARY KEY AUTOINCREMENT, "
             + "game INTEGER, "
             + "team INTEGER, "
             + "gamer_name TEXT, "
@@ -376,8 +385,9 @@ namespace TestLaserwar
                         SQL.SqlInsertSingle(tabelEvents, fildEvents, values);
                         valSQL.Clear();
                     }
-                    reader.Dispose();
+                    
                 }
+                reader.Dispose();
             }
         }
 
@@ -467,7 +477,6 @@ namespace TestLaserwar
                 if (jObject["sounds"] != null)
                 {
                     MainVal = "";
-                    //List<MyTable> result = new List<MyTable>(3);
                     foreach (var Data in jObject["sounds"])
                     {
                         //собираем под строку для вывода на форму
@@ -475,7 +484,6 @@ namespace TestLaserwar
                         //собирамем набор строк для последующей загрузки данных в БД
                         val.Add("'" + (string)Data["name"] + "'" + ", " + "'" + (string)Data["url"] + "'" + ", " + "'" + (string)Data["size"] + "'");
                         //собираем данные о композициях для последующего добавления их в таблицу
-                        //result.Add(new MyTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"]));
                         bindSoundTabel.Add(new SoundTable((string)Data["name"], ((int)Data["size"]) / 1024, (string)Data["url"], true, Visibility.Hidden, Visibility.Hidden, Visibility.Hidden, @"~\..\resources\downloading_sound.png", Visibility.Hidden, Visibility.Hidden, 0, @"~\..\resources\play_disabled.png"));
                         //собираем полную строку для вывода на форму
                         if (!string.IsNullOrWhiteSpace(SubVal)) MainVal += SubVal + " byte" + Environment.NewLine;
@@ -552,9 +560,12 @@ namespace TestLaserwar
             th.Start();
         }
 
-        //-------------------------------------------------
+        //****************************************************************
+        //*******************        ЗВУКИ         ***********************
+        //****************************************************************
+
         /// <summary>
-        /// Класс с полями для заполнения таблицы
+        /// Класс с полями для заполнения таблицы Звуковых файлов
         /// </summary>
         class SoundTable : INotifyPropertyChanged
         {
@@ -1220,6 +1231,510 @@ namespace TestLaserwar
             player.Stop();
             // останавливаем таймер
             timer.Stop();
+        }
+
+
+        //****************************************************************
+        //*******************        ИГРЫ          ***********************
+        //****************************************************************
+
+
+        /// <summary>
+        /// Класс с полями для заполнения таблицы ИГР
+        /// </summary>
+        class GameTable : INotifyPropertyChanged
+        {
+            public GameTable(int id_Game, string GameName, string GameDate, int QuantityGamers)
+            {
+                this.id_Game = id_Game;
+                this.GameName = GameName;
+                this.GameDate = GameDate;
+                this.QuantityGamers = QuantityGamers;
+            }
+
+            // *************************** Таблица игры ***************************      
+
+            // id игры
+            public int _id_Game;
+            /// <summary>
+            /// id игры
+            /// </summary>
+            public int id_Game
+            {
+                get
+                {
+                    return _id_Game;
+                }
+                set
+                {
+                    if (_id_Game != value)
+                    {
+                        _id_Game = value;
+                        OnPropertyChanged("id_Game");
+                    }
+                }
+            }
+
+            // Имя игры
+            public string _GameName;
+            /// <summary>
+            /// Имя игры
+            /// </summary>
+            public string GameName
+            {
+                get
+                {
+                    return _GameName;
+                }
+                set
+                {
+                    if (_GameName != value)
+                    {
+                        _GameName = value;
+                        OnPropertyChanged("GameName");
+                    }
+                }
+            }
+
+            // Дата игры
+            public string _GameDate;
+            /// <summary>
+            /// Дата игры
+            /// </summary>
+            public string GameDate
+            {
+                get
+                {
+                    return _GameDate;
+                }
+                set
+                {
+                    if (_GameDate != value)
+                    {
+                        _GameDate = value;
+                        OnPropertyChanged("GameDate");
+                    }
+                }
+            }
+
+            // Количество игроков
+            public int _QuantityGamers;
+            /// <summary>
+            /// Количество игроков
+            /// </summary>
+            public int QuantityGamers
+            {
+                get
+                {
+                    return _QuantityGamers;
+                }
+                set
+                {
+                    if (_QuantityGamers != value)
+                    {
+                        _QuantityGamers = value;
+                        OnPropertyChanged("URL");
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            // уведомления представления об изменениях свойств объекта.
+            protected void OnPropertyChanged(string name)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }    
+
+        /// <summary>
+        /// Лист экземпляров класса GameTabel для удобного обращения к ячейкам таблицы игр
+        /// </summary>
+        List<GameTable> bindGameTabel = new List<GameTable>();        
+
+        private void GetGameData()
+        {
+            DataTable GameTabel = new DataTable();
+            SQLite SQL = new SQLite();
+            bindGameTabel.Clear();
+            dataGridGame.Items.Refresh();
+            string SQLQuery = "Select Games.id_Game,Games.game_name, Games.game_date, count(Events.gamer_name) from Games inner join Events on Games.id_game=Events.game group by Games.game_name";
+            GameTabel = SQL.SqlRead(SQLQuery);
+            for (int i = 0; i <= GameTabel.Rows.Count-1; i++)
+            {
+                bindGameTabel.Add(new GameTable(Convert.ToInt32(GameTabel.Rows[i][0]), GameTabel.Rows[i][1].ToString(), UnixTimeStampToDateTime(Convert.ToDouble(GameTabel.Rows[i][2])).ToString(), Convert.ToInt32(GameTabel.Rows[i][3])));
+            }
+            dataGridGame.Items.Refresh();  
+        }
+
+        /// <summary>
+        /// Конвертор UNIX-время в DateTime
+        /// </summary>
+        /// <param name="unixTimeStamp">количество секунд, прошедших с полуночи (00:00:00 UTC) 1 января 1970 года (четверг) до указанного момента</param>
+        /// <returns></returns>
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+            return dtDateTime;
+        }
+
+        /// <summary>
+        /// Двойной клик на строке в таблице игр, открывающий форму детализации игр
+        /// </summary>
+        private void dataGridGame_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (dataGridGame.CurrentItem != null)
+            {
+                //получаем уникальный идентификатор игры
+                int id_game = bindGameTabel[dataGridGame.Items.IndexOf(dataGridGame.CurrentItem)].id_Game;
+                int count = bindGameTabel.Count;
+                GridGames.Visibility = Visibility.Hidden;
+                GridGamesDetail.Visibility = Visibility.Visible;
+                FillGameDetail(id_game);
+            }
+         }
+
+
+        //****************************************************************
+        //*******************   Детализаци  ИГРЫ   ***********************
+        //****************************************************************
+
+
+        /// <summary>
+        /// Класс с полями для заполнения таблицы ИГР
+        /// </summary>
+        class DetailGameTable : INotifyPropertyChanged
+        {
+
+            public DetailGameTable(int Id, string CommandName, string GamerName, int Rating, string Accuracy, int Shots)
+            {
+                this.Id = Id;
+                this.CommandName = CommandName;
+                this.GamerName = GamerName;
+                this.Rating = Rating;
+                this.Accuracy = Accuracy;
+                this.Shots = Shots;
+            }
+            // *************************** Таблица Детализация игры ***************************   \
+
+            // ИД в таблице детализации игр
+            public int _Id;
+            /// <summary>
+            /// ИД в таблице детализации игр
+            /// </summary>
+            public int Id
+            {
+                get
+                {
+                    return _Id;
+                }
+                set
+                {
+                    if (_Id != value)
+                    {
+                        _Id = value;
+                        OnPropertyChanged("Id");
+                    }
+                }
+            }               
+             
+            // Имя команды
+            public string _CommandName;
+            /// <summary>
+            /// Имя команды
+            /// </summary>
+            public string CommandName
+            {
+                get
+                {
+                    return _CommandName;
+                }
+                set
+                {
+                    if (_CommandName != value)
+                    {
+                        _CommandName = value;
+                        OnPropertyChanged("CommandName");
+                    }
+                }
+            }
+
+            // Имя игрока
+            public string _GamerName;
+            /// <summary>
+            /// Имя игрока
+            /// </summary>
+            public string GamerName
+            {
+                get
+                {
+                    return _GamerName;
+                }
+                set
+                {
+                    if (_GamerName != value)
+                    {
+                        _GamerName = value;
+                        OnPropertyChanged("GamerName");
+                    }
+                }
+            }
+
+            // Рейтинг
+            public int _Rating;
+            /// <summary>
+            /// Рейтинг
+            /// </summary>
+            public int Rating
+            {
+                get
+                {
+                    return _Rating;
+                }
+                set
+                {
+                    if (_Rating != value)
+                    {
+                        _Rating = value;
+                        OnPropertyChanged("OnOfPercent");
+                    }
+                }
+            }
+
+            // точность
+            public string _Accuracy;
+            /// <summary>
+            /// точность
+            /// </summary>
+            public string Accuracy
+            {
+                get
+                {
+                    return _Accuracy;
+                }
+                set
+                {
+                    if (_Accuracy != value)
+                    {
+                        _Accuracy = value;
+                        OnPropertyChanged("Accuracy");
+                    }
+                }
+            }
+
+            // количество выстрелов
+            public int _Shots;
+            /// <summary>
+            /// количество выстрелов
+            /// </summary>
+            public int Shots
+            {
+                get
+                {
+                    return _Shots;
+                }
+                set
+                {
+                    if (_Shots != value)
+                    {
+                        _Shots = value;
+                        OnPropertyChanged("Shots");
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            // уведомления представления об изменениях свойств объекта.
+            protected void OnPropertyChanged(string name)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        /// <summary>
+        /// Класс для привязки свойств лейбра в заголовке формы детализируемой игры
+        /// </summary>
+        class LabelDetailGameTable : INotifyPropertyChanged
+        {
+            // Имя детализируемой игры
+            public string _DetailGameName;
+            /// <summary>
+            /// Имя детализируемой игры
+            /// </summary>
+            public string DetailGameName
+            {
+                get
+                {
+                    return _DetailGameName;
+                }
+                set
+                {
+                    if (_DetailGameName != value)
+                    {
+                        _DetailGameName = value;
+                        OnPropertyChanged("DetailGameName");
+                    }
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            // уведомления представления об изменениях свойств объекта.
+            protected void OnPropertyChanged(string name)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        LabelDetailGameTable LabelDetail = new LabelDetailGameTable();
+
+        ObservableCollection<DetailGameTable> ObsCollectionDetailGameTabel = new ObservableCollection<DetailGameTable>();
+
+        /// <summary>
+        /// Заполнение таблицы детализации игр
+        /// </summary>
+        /// <param name="id_game"> id детализируемой игры</param>
+        private void FillGameDetail(int id_game)
+        {
+            SQLite SQL = new SQLite();
+            DataTable DetailGameTabel = new DataTable();
+            string SQLQuery;          
+
+            ObsCollectionDetailGameTabel.Clear();
+
+            dataGridDetailGame.Items.Refresh();
+            //получаем имя детализируемой игры
+            SQLQuery = "select Games.game_name from Games where Games.id_game='" + id_game + "'";
+            DetailGameTabel = SQL.SqlRead(SQLQuery);
+            LabelDetail.DetailGameName = DetailGameTabel.Rows[0][0].ToString();
+            //получаем набор команд и данные по игрокам
+            SQLQuery = "select Events.Id,Teams.team_name, Events.gamer_name, Events.rating, Events.accuracy, Events.shots from Events inner join Teams on Teams.id_team = Events.team where game = '" + id_game + "'";
+
+            DetailGameTabel = SQL.SqlRead(SQLQuery);
+            for (int i = 0; i <= DetailGameTabel.Rows.Count - 1; i++)
+            { 
+                int Id = Convert.ToInt32(DetailGameTabel.Rows[i][0]);
+                string CommandName = DetailGameTabel.Rows[i][1].ToString();
+                string GamerName = DetailGameTabel.Rows[i][2].ToString();
+                int Rating = Convert.ToInt32(DetailGameTabel.Rows[i][3]);
+                string Accuracy = Convert.ToString(Convert.ToDouble(DetailGameTabel.Rows[i][4]) * 100) + " %";
+                int Shots = Convert.ToInt32(DetailGameTabel.Rows[i][5]);
+
+               ObsCollectionDetailGameTabel.Add( new DetailGameTable(Id, CommandName, GamerName, Rating, Accuracy, Shots));
+            }
+
+
+            ListCollectionView collection = new ListCollectionView(ObsCollectionDetailGameTabel);
+            //Устанавливаем элемент по которому будет проводиться группировка
+            collection.GroupDescriptions.Add(new PropertyGroupDescription("CommandName"));
+
+            dataGridDetailGame.ItemsSource = collection;
+            dataGridDetailGame.Items.Refresh();
+        }
+
+        /// <summary>
+        /// Возврат на форму игр
+        /// </summary>
+        private void Return_Click(object sender, RoutedEventArgs e)
+        {
+            GridGames.Visibility = Visibility.Visible;
+            GridGamesDetail.Visibility = Visibility.Hidden;
+            GetGameData();
+        }
+  
+        // поля для обновления данных по игроку через таблицу детализации игр
+        // сохраняем значения полей до изменения
+        int Prep_id;
+        int Row_id;
+        int Prep_Rating;
+        string Prep_Accuracy;
+        int Prep_Shots;
+
+        /// <summary>
+        /// Подготовка к изменению данных в ячейки таблицы детализации игр
+        /// </summary>
+        private void dataGridDetailGame_PreparingCellForEdit(object sender, System.Windows.Controls.DataGridPreparingCellForEditEventArgs e)
+        {
+            Row_id= dataGridDetailGame.Items.IndexOf(dataGridDetailGame.CurrentItem);
+            Prep_id = ObsCollectionDetailGameTabel[Row_id].Id;
+            Prep_Rating = ObsCollectionDetailGameTabel[Row_id].Rating;
+            Prep_Accuracy = ObsCollectionDetailGameTabel[Row_id].Accuracy;
+            Prep_Shots = ObsCollectionDetailGameTabel[Row_id].Shots;
+        }
+
+        /// <summary>
+        /// Завершение изменений данных в ячейки таблицы детализации игр
+        /// </summary>
+        private void dataGridDetailGame_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+        {
+     
+            //считываем значения полей после потери фокуса
+            int Aft_Rating = ObsCollectionDetailGameTabel[Row_id].Rating;
+            string Aft_Accuracy = ObsCollectionDetailGameTabel[Row_id].Accuracy;
+            int Aft_Shots = ObsCollectionDetailGameTabel[Row_id].Shots;
+
+            //сравниваем значение до изменений с текущем значением
+            //если изменения различаются то вносим изменения в БД
+            if (Aft_Rating != Prep_Rating)
+            {
+                //MessageBox.Show("изменён рейтинг");
+                SQLite SQL = new SQLite();
+                string tabelEvents = "Events";
+                string fildEvents = "rating";
+                SQL.SqlUpdateSinglefield(tabelEvents, fildEvents, Aft_Rating.ToString(), "id ='" + Prep_id + "'");
+            }
+            if (Aft_Accuracy != Prep_Accuracy)
+            {
+                // MessageBox.Show("изменёна точность");
+                SQLite SQL = new SQLite();
+                string tabelEvents = "Events";
+                string fildEvents = "accuracy";
+                // Удаляем из строки все символы кроме цифр
+                string prom_Accuracy = "";
+                for (int i = 0; i < Aft_Accuracy.Length; i++)
+                {
+                    if (Char.IsDigit(Aft_Accuracy[i])) prom_Accuracy += Aft_Accuracy[i];
+                }
+                double new_Accuracy =0;
+                if (prom_Accuracy != "") new_Accuracy = Convert.ToDouble(prom_Accuracy) / 100;
+                else
+                {
+                    prom_Accuracy = "0";
+                    new_Accuracy = 0;
+                }
+                ObsCollectionDetailGameTabel[Row_id].Accuracy = prom_Accuracy.ToString() + " %";
+                string STRnew_Accuracy = new_Accuracy.ToString();
+                //меняем точку на запятую,т.к. бд при вовторном запросе вернёт 0 если в числе будет запятая
+                STRnew_Accuracy = STRnew_Accuracy.Replace(",", ".");
+                SQL.SqlUpdateSinglefield(tabelEvents, fildEvents, STRnew_Accuracy, "id ='" + Prep_id + "'");
+
+            }
+            if (Aft_Shots != Prep_Shots)
+            {
+                // MessageBox.Show("изменёны выстрелы");
+                SQLite SQL = new SQLite();
+                string tabelEvents = "Events";
+                string fildEvents = "shots";
+                SQL.SqlUpdateSinglefield(tabelEvents, fildEvents, Aft_Shots.ToString(), "id ='" + Prep_id + "'");
+
+            }
+        }
+
+        /// <summary>
+        /// Редактирование информации по игроку при двойном нажатии на строку
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridDetailGame_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (dataGridDetailGame.CurrentItem != null)
+            {
+                //получаем уникальный идентификатор игры
+                int id_game = ObsCollectionDetailGameTabel[dataGridDetailGame.Items.IndexOf(dataGridDetailGame.CurrentItem)].Id;
+
+            }
         }
 
     }
