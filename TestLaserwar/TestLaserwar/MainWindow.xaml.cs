@@ -4,16 +4,25 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Net;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Controls.Primitives;
+using System.IO;
+using System.IO.MemoryMappedFiles;
+using System.Globalization;
 using System.Windows.Controls;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.ObjectModel;
+using System.Collections;
+using iTextSharp;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace TestLaserwar
 {
@@ -1379,6 +1388,9 @@ namespace TestLaserwar
             return dtDateTime;
         }
 
+        //Уникальный идентификатор игры для построения ЗВА
+        int ID;
+
         /// <summary>
         /// Двойной клик на строке в таблице игр, открывающий форму детализации игр
         /// </summary>
@@ -1391,6 +1403,7 @@ namespace TestLaserwar
                 int count = bindGameTabel.Count;
                 GridGames.Visibility = Visibility.Hidden;
                 GridGamesDetail.Visibility = Visibility.Visible;
+                ID = id_game;
                 FillGameDetail(id_game);
             }
          }
@@ -1737,5 +1750,451 @@ namespace TestLaserwar
             }
         }
 
+        /// <summary>
+        /// Сохраняем детализацию игры в PDF
+        /// </summary>
+        private void SavePDF_Click(object sender, RoutedEventArgs e)
+        {
+            SQLite SQL = new SQLite();
+            DataTable SQLansw = new DataTable();
+            string SQLQuery;
+
+            SQLQuery = "select Games.game_name, Games.game_date from Games where Games.id_game='" + ID + "'";
+            SQLansw = SQL.SqlRead(SQLQuery);
+
+            string GameName = SQLansw.Rows[0][0].ToString();
+            string Date = UnixTimeStampToDateTime(Convert.ToDouble(SQLansw.Rows[0][1])).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+            string FileName = "Статистика " + GameName + ".pdf";
+            BaseFont baseFont = RegisterFonts();
+
+            FileStream fs = new FileStream(FileName, FileMode.Create, FileAccess.Write, FileShare.None);
+            iTextSharp.text.Rectangle rec3 = new iTextSharp.text.Rectangle(PageSize.A4);
+            rec3.BackgroundColor = new BaseColor(System.Drawing.Color.White);
+            Document doc = new Document(rec3, 50, 30, 30, 30);
+
+            PdfWriter writer = PdfWriter.GetInstance(doc, fs);
+            doc.Open();
+            doc.AddTitle("Отчет по игре");
+            doc.AddSubject(GameName + " " + Date);
+            doc.AddAuthor("LazserWar");
+
+            // Получаем данные для выгрузки PDF
+            SQLQuery = "Select Teams.id_team, Teams.team_name, Events.gamer_name, Events.rating, Events.accuracy, Events.shots from Events inner join Teams on Teams.id_team = Events.team where game = '" + ID + "'";
+            SQLansw = SQL.SqlRead(SQLQuery);
+
+            iTextSharp.text.Font fontPDFHeader = new iTextSharp.text.Font(baseFont, 18, iTextSharp.text.Font.BOLD);
+            iTextSharp.text.Font fontPDFColumnName = new iTextSharp.text.Font(baseFont, 12, iTextSharp.text.Font.BOLD);
+            iTextSharp.text.Font fontPDFCommandName = new iTextSharp.text.Font(baseFont, 16, iTextSharp.text.Font.BOLD);
+            iTextSharp.text.Font fontPDFData = new iTextSharp.text.Font(baseFont, 12, iTextSharp.text.Font.NORMAL);
+            iTextSharp.text.Font fontPDFDataAll = new iTextSharp.text.Font(baseFont, 10, iTextSharp.text.Font.NORMAL);
+
+            PdfPTable table = new PdfPTable(4);
+
+            table.HorizontalAlignment = Element.ALIGN_LEFT; 
+            table.TotalWidth = 500f;
+            table.LockedWidth = true;
+            float[] widths = new float[] { 120f, 100f, 100f, 100f};
+            table.SetWidths(widths);
+
+            PdfPCell cell = new PdfPCell(new Phrase(GameName + "    " + Date, fontPDFHeader));
+            cell.Colspan = 4;
+            cell.FixedHeight = 40f;
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.VerticalAlignment = Element.ALIGN_TOP;
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;            
+            table.AddCell(cell);
+
+            cell = new PdfPCell(new Phrase("Игрок", fontPDFColumnName));         
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            cell.FixedHeight = 30f;
+            table.AddCell(cell);
+            cell = new PdfPCell(new Phrase("Рейтинг", fontPDFColumnName));
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            cell.FixedHeight = 30f;
+            table.AddCell(cell);
+            cell = new PdfPCell(new Phrase("Точность", fontPDFColumnName));
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            cell.FixedHeight = 30f;
+            table.AddCell(cell);
+            cell = new PdfPCell(new Phrase("Выстрелы", fontPDFColumnName));
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            cell.FixedHeight = 30f;
+            table.AddCell(cell);
+            int id = -1;
+            string CommandName;
+           
+            DataTable SQLanswCom = new DataTable();
+            SQLQuery = " Select Events.game, Teams.team_name, count(DISTINCT Events.team)from Events inner join Teams on Teams.id_team = Events.team where Events.game = '" + ID + "' group by Events.game";
+            SQLanswCom = SQL.SqlRead(SQLQuery);
+            int indMAX = Convert.ToInt32(SQLanswCom.Rows[0][2]);
+            PdfPCell[] _cellCommand = new PdfPCell[indMAX];
+
+            float[] reting = new float[indMAX];
+            float retingCommand = 0;
+            float[] accuracy = new float[indMAX];
+            float accuracyCommand = 0;
+
+            int ind = 0;
+            foreach (DataRow row in SQLansw.Rows)
+            {
+                if (id != Convert.ToInt32(row[0]))
+                {                    
+                    CommandName = row[1].ToString();
+                    cell = new PdfPCell(new Phrase(CommandName, fontPDFCommandName));
+                    cell.Colspan = 4;
+                    cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    cell.FixedHeight = 50f;
+                    table.AddCell(cell);
+
+                    id = Convert.ToInt32(row[0]);
+                                      
+                    _cellCommand[ind] =  new PdfPCell(new Phrase(CommandName, fontPDFCommandName));
+                    _cellCommand[ind].Colspan = 2;
+                    _cellCommand[ind].FixedHeight = 40f;
+                    _cellCommand[ind].HorizontalAlignment = Element.ALIGN_LEFT;
+                    _cellCommand[ind].VerticalAlignment = Element.ALIGN_MIDDLE;
+                    _cellCommand[ind].Border = iTextSharp.text.Rectangle.NO_BORDER;
+
+                    reting[ind] = ind;
+                    accuracy[ind] = ind;
+
+                    ind++;
+                }
+                cell = new PdfPCell(new Phrase(row[2].ToString(), fontPDFData));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.Border = PdfPCell.BOTTOM_BORDER;
+                cell.FixedHeight = 20f;
+                cell.BorderColor= new BaseColor(197, 197, 197);
+                table.AddCell(cell);
+                cell = new PdfPCell(new Phrase(row[3].ToString(), fontPDFData));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.Border = PdfPCell.BOTTOM_BORDER;
+                cell.FixedHeight = 20f;
+                cell.BorderColor = new BaseColor(197, 197, 197);
+                table.AddCell(cell);
+
+                double _Accuracy = Convert.ToDouble(row[4])*100;
+                string Accuracy = _Accuracy.ToString() + " %";
+                cell = new PdfPCell(new Phrase(Accuracy, fontPDFData));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.Border = PdfPCell.BOTTOM_BORDER;
+                cell.FixedHeight = 20f;
+                cell.BorderColor = new BaseColor(197, 197, 197);
+                table.AddCell(cell);
+
+                cell = new PdfPCell(new Phrase(row[5].ToString(), fontPDFData));
+                cell.HorizontalAlignment = Element.ALIGN_LEFT;
+                cell.Border = PdfPCell.BOTTOM_BORDER;
+                cell.FixedHeight = 20f;
+                cell.BorderColor = new BaseColor(197, 197, 197);
+                table.AddCell(cell);
+            }
+
+            doc.Add(table);
+
+            table = new PdfPTable(5);
+            table.HorizontalAlignment = Element.ALIGN_LEFT;
+            table.TotalWidth = 500f;
+            table.LockedWidth = true;
+            float[] widthsDetail = new float[] { 120f, 120f, 20f, 120f, 120f };
+            table.SetWidths(widthsDetail);
+
+            cell = new PdfPCell(new Phrase("  "));
+            cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+            cell.FixedHeight = 40f;
+            cell.Colspan = 5;
+            table.AddCell(cell);
+
+            int tick = 1;
+
+            int i = 0;
+            int iparam = 0;
+
+            while(i<indMAX)
+            {
+                if (tick <= 2)
+                {
+                    if (tick % 2 != 0)
+                    {
+                        table.AddCell(_cellCommand[i]);
+                        tick++;
+
+                        cell = new PdfPCell(new Phrase(" "));
+                        cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                        table.AddCell(cell);
+                    }
+                    else
+                    {
+                        table.AddCell(_cellCommand[i]);
+                        tick++;
+                    }
+                }
+                if (tick > 2)
+                {
+                    cell = new PdfPCell(new Phrase("Рейтинг", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(reting[iparam].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("Рейтинг", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(reting[iparam + 1].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор рей1", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("    "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор рей2", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell(new Phrase("Точночть", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(accuracy[iparam].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("точночть", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(accuracy[iparam+1].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор точ1", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("    "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор точ2", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    iparam = iparam + 2;
+                    tick = 1;
+                }
+                i++;
+                if ((i==indMAX) && (i % 2!=0))
+                {
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell(new Phrase("Рейтинг", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(reting[iparam].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор рей1", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("    "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell(new Phrase("Точночть", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(reting[iparam].ToString(), fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("прогрессор точ1", fontPDFDataAll));
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.FixedHeight = 5f;
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase("    "));
+                    cell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    table.AddCell(cell);
+                    cell = new PdfPCell(new Phrase(" "));
+                    cell.BorderColor = new BaseColor(System.Drawing.Color.Blue);
+                    cell.Colspan = 2;
+                    table.AddCell(cell);
+                    tick = 1;
+                }
+            }
+
+
+
+            doc.Add(table);
+
+
+
+            //PdfTemplate template = writer.SetgetDirectContent().createTemplate(120, 80);
+            //template.setColorFill(BaseColor.RED);
+            //template.rectangle(0, 0, 120, 80);
+            //template.fill();
+
+            //table = new PdfPTable(3);
+            //cell = new PdfPCell(Image.getInstance(template));
+            //table.AddCell(cell);
+            //doc.Add(table);
+
+            //doc.Add(table);
+
+            //doc.Add(new Paragraph(" gfhfgjgh   ", fontPDFData));
+
+            //iTextSharp.text.Rectangle rect = new iTextSharp.text.Rectangle(200, 200, 100, 100);
+            //rect.BackgroundColor= new BaseColor(System.Drawing.Color.Blue);
+            //doc.Add(rect);
+
+            //doc.Add(new Paragraph(" gfhfgjgh   ", fontPDFData));
+            //doc.Add(new Paragraph(" gfhfgjgh   ", fontPDFData));
+            //doc.Add(new Paragraph(" gfhfgjgh   ", fontPDFData));
+            //doc.Add(new Paragraph(" gfhfgjgh   ", fontPDFData));
+            doc.Close();       
+            //Открываем сформированный файл      
+            Process.Start(FileName);
+        }
+
+        public void ExportToPdf(DataTable dt, string FileName)
+        {
+            Document document = new Document();
+            PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(FileName, FileMode.Create));
+            document.Open();
+
+            iTextSharp.text.Font font5 = iTextSharp.text.FontFactory.GetFont(FontFactory.HELVETICA, 5);
+
+            PdfPTable table = new PdfPTable(dt.Columns.Count);
+            PdfPRow row = null;
+            float[] widths = new float[] { 4f, 4f, 4f, 4f, 4f, 4f };
+
+            table.SetWidths(widths);
+
+            table.WidthPercentage = 100;
+
+            PdfPCell cell = new PdfPCell(new Phrase("Products"));
+
+            cell.Colspan = dt.Columns.Count;
+            //Заголовки
+            foreach (DataColumn c in dt.Columns)
+            {
+                table.AddCell(new Phrase(c.ColumnName, font5));
+            }
+
+            foreach (DataRow r in dt.Rows)
+            {
+                if (dt.Rows.Count > 0)
+                {
+                    table.AddCell(new Phrase(r[0].ToString(), font5));
+                    table.AddCell(new Phrase(r[1].ToString(), font5));
+                    table.AddCell(new Phrase(r[2].ToString(), font5));
+                    table.AddCell(new Phrase(r[3].ToString(), font5));
+                }
+            }
+            document.Add(table);
+            document.Close();
+            Process.Start(FileName);
+        }
+
+
+        /// <summary>
+        ///  Ищем шрифты      
+        /// </summary>
+        /// <returns></returns>
+        private static BaseFont RegisterFonts()
+        {
+            string[] fontNames = { "Calibri.ttf", "Arial.ttf", "Segoe UI.ttf", "Tahoma.ttf" };
+            string fontFile = null;
+
+            foreach (string name in fontNames)
+            {
+                fontFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), name);
+                if (!File.Exists(fontFile))
+                {
+                    Debug.WriteLine("Шрифт \"{0}\" не найден.");
+                    fontFile = null;
+                }
+                else break;
+            }
+            if (fontFile == null)
+            {
+                throw new FileNotFoundException("Ни один шрифт не найден.");
+            }
+
+            FontFactory.Register(fontFile);
+            return BaseFont.CreateFont(fontFile, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+        }
+
+        private void PublishVK_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

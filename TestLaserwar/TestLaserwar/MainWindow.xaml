@@ -26,7 +26,7 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--Grid Главное меню -->
-        <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2C2C2C">
+        <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2A2C2C">
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="225"></RowDefinition>
                 <RowDefinition Height="100"></RowDefinition>
@@ -208,8 +208,8 @@
                 <Image Source="resources/back.png" Height="20" Width="20"></Image>
             </Button>
             <Label Name="DetailGame" Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}" Content="{Binding DetailGameName}"></Label>
-            <Button Grid.Row="1" Grid.Column="2" x:Name="PublishVK" Style="{StaticResource AccessoryButtonVK}" Content="ОПУБЛИКОВАТЬ В ВК" IsEnabled="{Binding OnOfDownloadJsonButtton}" Margin="0,5,0,30"/>
-            <Button Grid.Row="1" Grid.Column="3" x:Name="SavePDF" Style="{StaticResource AccessoryButton}" Content="СОХРАНИТЬ КАК PDF" IsEnabled="{Binding OnOfDownloadJsonButtton}"  Margin="0,5,0,30"/>
+            <Button Grid.Row="1" Grid.Column="2" x:Name="PublishVK" Style="{StaticResource AccessoryButtonVK}" Content="ОПУБЛИКОВАТЬ В ВК" Margin="0,5,0,30" Click="PublishVK_Click"/>
+            <Button Grid.Row="1" Grid.Column="3" x:Name="SavePDF" Style="{StaticResource AccessoryButton}" Content="СОХРАНИТЬ КАК PDF" Margin="0,5,0,30" Click="SavePDF_Click"/>
             <!--Таблица для детализации игр-->
             <DataGrid x:Name="dataGridDetailGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGridDetail}" CellStyle="{StaticResource DataGridCellsDetail}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" MouseDoubleClick="dataGridDetailGame_MouseDoubleClick" PreparingCellForEdit="dataGridDetailGame_PreparingCellForEdit" CellEditEnding="dataGridDetailGame_CellEditEnding">
                 <DataGrid.GroupStyle>
