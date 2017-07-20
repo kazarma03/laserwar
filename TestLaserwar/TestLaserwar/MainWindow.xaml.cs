@@ -1863,12 +1863,6 @@ namespace TestLaserwar
             int indMAX = Convert.ToInt32(SQLanswCom.Rows[0][2]);
             PdfPCell[] _cellCommand = new PdfPCell[indMAX];
 
-            float[] reting = new float[indMAX];
-            float retingCommand = 0;
-            float[] accuracy = new float[indMAX];
-            float accuracyCommand = 0;
-            float progress;
-
             int ind = 0;
             foreach (DataRow row in SQLansw.Rows)
             {
@@ -1892,33 +1886,37 @@ namespace TestLaserwar
                     _cellCommand[ind].VerticalAlignment = Element.ALIGN_MIDDLE;
                     _cellCommand[ind].Border = iTextSharp.text.Rectangle.NO_BORDER;
 
-                    reting[ind] = ind + 7;
-                    accuracy[ind] = ind + 9;
-
                     ind++;
                 }
+                // добавляем имя игрока
                 cell = new PdfPCell(new Phrase(row[2].ToString(), fontPDFData));
                 cell.HorizontalAlignment = Element.ALIGN_LEFT;
                 cell.Border = PdfPCell.BOTTOM_BORDER;
                 cell.FixedHeight = 20f;
                 cell.BorderColor = new BaseColor(197, 197, 197);
                 table.AddCell(cell);
+                // добавляем рейтинг игрока
                 cell = new PdfPCell(new Phrase(row[3].ToString(), fontPDFData));
+
+                Double nowReting = Convert.ToDouble(row[3]);
+
                 cell.HorizontalAlignment = Element.ALIGN_LEFT;
                 cell.Border = PdfPCell.BOTTOM_BORDER;
                 cell.FixedHeight = 20f;
                 cell.BorderColor = new BaseColor(197, 197, 197);
                 table.AddCell(cell);
+                // добавляем рейтинг игрока
 
                 double _Accuracy = Convert.ToDouble(row[4]) * 100;
                 string Accuracy = _Accuracy.ToString() + " %";
+
                 cell = new PdfPCell(new Phrase(Accuracy, fontPDFData));
                 cell.HorizontalAlignment = Element.ALIGN_LEFT;
                 cell.Border = PdfPCell.BOTTOM_BORDER;
                 cell.FixedHeight = 20f;
                 cell.BorderColor = new BaseColor(197, 197, 197);
                 table.AddCell(cell);
-
+                // добавляем количество выстрелов игрока
                 cell = new PdfPCell(new Phrase(row[5].ToString(), fontPDFData));
                 cell.HorizontalAlignment = Element.ALIGN_LEFT;
                 cell.Border = PdfPCell.BOTTOM_BORDER;
@@ -1927,7 +1925,42 @@ namespace TestLaserwar
                 table.AddCell(cell);
             }
 
+            double[] reting = new double[indMAX];
+            double maxReting = 0;
+            double[] accuracy = new double[indMAX];
+            double progress;
+
+            SQLQuery ="select Events.game,  Teams.team_name,Events.gamer_name, SUM(Events.rating), "
+            +" SUM(Events.accuracy * 100), Count(Events.gamer_name) from Events "
+            +"inner join Teams on Teams.id_team = Events.team inner join Games on Games.id_game = Events.game "
+            +"where Events.game = '" + ID + "' Group by Teams.team_name";
+            SQLansw = SQL.SqlRead(SQLQuery);
+
+            //Считаем командную точность (средняя точность всех игроков)
+            //Считаем командный рейтинг (суммарный рейтинг всех игроков)
+            //Находим максимальный командный рейтинг
+            for (int k=0;k< indMAX;k++)
+            {
+                reting[k] = Convert.ToDouble(SQLansw.Rows[k][3]);
+                if (maxReting < reting[k]) maxReting = reting[k];
+                accuracy[k] = Convert.ToDouble(SQLansw.Rows[k][4])/ Convert.ToDouble(SQLansw.Rows[k][5]);
+                accuracy[k] = Math.Round(accuracy[k], 1);
+                if (accuracy[k] > 100) accuracy[k] = 100;
+            }
+
             doc.Add(table);
+            for (int h = 0; h < reting.Length; h++)
+            {
+                if (maxReting < reting[h]) maxReting = reting[h];
+            }
+            for (int h = 0; h < reting.Length; h++)
+            {
+                if (maxReting < reting[h]) maxReting = reting[h];
+            }
+            double m = maxReting;
+            double[] l = reting;
+            double[] u = accuracy;
+
 
             table = new PdfPTable(9);
             table.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -2017,11 +2050,11 @@ namespace TestLaserwar
                     table.AddCell(cell);
                     // ПРОГРЕССОР РЕЙТИНГА ЧЁТНОЙ КОМАНДЫ
 
-
+                    progress = reting[iparam]/(maxReting/234);
 
                     template = PdfTemplate.CreateTemplate(writer, 234f, 10f);
                     template.SetColorFill(new BaseColor((System.Drawing.Color.Blue)));
-                    template.Rectangle(0, 0, 234f, 10f);
+                    template.Rectangle(0, 0, progress, 10f);
 
 
                     template.Fill();
@@ -2039,10 +2072,11 @@ namespace TestLaserwar
                     table.AddCell(cell);
                     // ПРОГРЕССОР РЕЙТИНГА НЕЧЁТНОЙ КОМАНДЫ
 
+                    progress = reting[iparam+1] / (maxReting / 234);
 
                     template = PdfTemplate.CreateTemplate(writer, 234f, 10f);
                     template.SetColorFill(new BaseColor((System.Drawing.Color.Blue)));
-                    template.Rectangle(0, 0, 234f, 10f);
+                    template.Rectangle(0, 0, progress, 10f);
 
 
                     template.Fill();
@@ -2184,10 +2218,11 @@ namespace TestLaserwar
                     table.AddCell(cell);
                     // ПРОГРЕССОР РЕЙТИНГА НЕЧЁТНОЙ КОМАНДЫ
 
+                    progress = reting[iparam ] / (maxReting / 234);
 
                     template = PdfTemplate.CreateTemplate(writer, 234f, 10f);
                     template.SetColorFill(new BaseColor((System.Drawing.Color.Blue)));
-                    template.Rectangle(0, 0, 234f, 10f);
+                    template.Rectangle(0, 0, progress, 10f);
 
 
                     template.Fill();
