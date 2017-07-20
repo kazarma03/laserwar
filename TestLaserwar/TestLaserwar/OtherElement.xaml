@@ -31,7 +31,7 @@
     <Style x:Key="MainButtonDownload" BasedOn="{StaticResource MainButton}" TargetType="Button">
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=ClickButtonDownLoad}" Value="true">
-                 <Setter Property="Background" Value="Blue" />
+                <Setter Property="Background" Value="Blue" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -117,7 +117,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        
+
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Background" Value="{x:Null}"/>
@@ -217,6 +217,6 @@
 
 
 
- 
+
 
 </ResourceDictionary>
