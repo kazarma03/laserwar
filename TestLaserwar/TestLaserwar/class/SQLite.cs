@@ -64,7 +64,7 @@ namespace TestLaserwar
         /// <param name="SqlCommand"> SQL запрос </param>
         /// /// <param name="conn"> Реализованное подключение к БД </param>
         /// <returns> Количество измененных строк </returns>
-        public int ExecNonQuery(string SqlCommand, SQLiteConnection conn)
+        private int ExecNonQuery(string SqlCommand, SQLiteConnection conn)
         {
             SQLiteCommand cmd = conn.CreateCommand();
             cmd.CommandText = SqlCommand;
@@ -177,6 +177,40 @@ namespace TestLaserwar
             ad.Fill(data);
             SqlCloseConnect(conn, false);
             return data;
+        }
+
+        /// <summary>
+        /// Создаём БД для игр
+        /// </summary>
+        public void CreateDB()
+        {
+            SQLite SQL = new SQLite();
+
+            string tabelGames = "Games";
+            SQL.TabelDROP(tabelGames);
+            string fildGames = "id_game INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "game_name TEXT, "
+            + "game_date INTEGER";
+            SQL.TabelCreate(tabelGames, fildGames);
+
+            string tabelTeams = "Teams";
+            SQL.TabelDROP(tabelTeams);
+            string fildTeams = "id_team INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "team_name TEXT";
+            SQL.TabelCreate(tabelTeams, fildTeams);
+
+            string tabelEvents = "Events";
+            SQL.TabelDROP(tabelEvents);
+            string fildEvents = "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "game INTEGER, "
+            + "team INTEGER, "
+            + "gamer_name TEXT, "
+            + "rating INTEGER, "
+            + "accuracy REAL, "
+            + "shots INTEGER, "
+            + "FOREIGN KEY(game) REFERENCES Games(id_game), "
+            + "FOREIGN KEY(team) REFERENCES Commands(id_team)";
+            SQL.TabelCreate(tabelEvents, fildEvents);
         }
 
     }

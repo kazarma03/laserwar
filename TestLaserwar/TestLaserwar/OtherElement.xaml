@@ -58,7 +58,7 @@
         <Style.Setters>
             <Setter Property="BorderBrush" Value="Blue"></Setter>
             <Setter Property="Background" Value="Blue"></Setter>
-            <Setter Property="Foreground" Value="White"></Setter>
+            <Setter Property="Foreground" Value="WhiteSmoke"></Setter>
             <Setter Property="FontWeight" Value="Bold"></Setter>
             <Setter Property="FontSize" Value="13"></Setter>
             <Setter Property="Width" Value="180"></Setter>
@@ -68,7 +68,7 @@
     <Style x:Key="AccessoryButtonVK" TargetType="Button" BasedOn="{StaticResource AccessoryButton}">
         <Style.Setters>
             <Setter Property="BorderBrush" Value="Blue"></Setter>
-            <Setter Property="Background" Value="White"></Setter>
+            <Setter Property="Background" Value="WhiteSmoke"></Setter>
             <Setter Property="Foreground" Value="Blue"></Setter>
             <Setter Property="BorderThickness" Value="2 2 2 2"></Setter>
         </Style.Setters>
@@ -96,7 +96,40 @@
         </Style.Setters>
     </Style>
     <!--________________________-->
+    
+    <!--Стиль текст бокса для вывода ошибки и Json-->
 
+    <Style x:Key="TextBoxMessage" TargetType="TextBox">
+        <Style.Setters>
+            <Setter Property="BorderBrush" Value="Blue"></Setter>
+            <Setter Property="SelectionBrush" Value="White"></Setter>
+            <Setter Property="TextWrapping" Value="Wrap"></Setter>
+            <Setter Property="VerticalScrollBarVisibility" Value="Visible"></Setter>
+            <Setter Property="AcceptsReturn" Value="True"></Setter>
+            <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="Background" Value="WhiteSmoke"></Setter>
+            <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+            <Setter Property="IsReadOnly" Value="true"></Setter>
+        </Style.Setters>
+    </Style>
+    <!--________________________-->
+    
+    <!--Стиль Текст бокса и синей границей снизу-->
+    <Style x:Key="TextBoxBorderLine" TargetType="TextBox">
+        <Style.Setters>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Width" Value="350"></Setter>
+            <Setter Property="BorderBrush" Value="Blue"></Setter>
+            <Setter Property="SelectionBrush" Value="WhiteSmoke"></Setter>
+            <Setter Property="BorderThickness" Value="0,0,0,2"></Setter>
+            <Setter Property="Background" Value="WhiteSmoke"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+            <Setter Property="Margin" Value="5,0,0,10"></Setter>
+            <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
+        </Style.Setters>
+    </Style>
+    <!--________________________-->
+    
     <!--Стиль вспомогательной кнопки-->
     <Style x:Key="ButtonReturn" TargetType="Button">
         <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
@@ -214,9 +247,5 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
-
 
 </ResourceDictionary>

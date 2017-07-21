@@ -14,234 +14,485 @@
                 <ResourceDictionary Source="Grid.xaml"/>
                 <ResourceDictionary Source="OtherElement.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+            <PathGeometry x:Key="path">
+                <PathFigure IsClosed="True">
+                    <ArcSegment Point="1,0"
+            Size="50,25"
+            IsLargeArc="True"/>
+                </PathFigure>
+            </PathGeometry>
+            <Storyboard x:Key="storyboard"
+        Storyboard.TargetName="rect">
+                <DoubleAnimationUsingPath
+      Storyboard.TargetProperty="(Canvas.Left)"
+      PathGeometry="{StaticResource path}"
+      Source="X" Duration="0:0:5"/>
+                <DoubleAnimationUsingPath
+      Storyboard.TargetProperty="(Canvas.Top)"
+      PathGeometry="{StaticResource path}"
+      Source="Y" Duration="0:0:5"/>
+            </Storyboard>
         </ResourceDictionary>
-               
-            
+        
     </Window.Resources>
-    
+
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <!--Grid Главное меню -->
-        <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2A2C2C">
-            <Grid.RowDefinitions>
-                <RowDefinition MinHeight="225"></RowDefinition>
-                <RowDefinition Height="100"></RowDefinition>
-                <RowDefinition Height="100"></RowDefinition>
-                <RowDefinition Height="100"></RowDefinition>
-                <RowDefinition MinHeight="225"></RowDefinition>
-            </Grid.RowDefinitions>
-            <!--Кнопки главного меню  -->
-            <Button x:Name="download" Style="{StaticResource MainButtonDownload}" IsEnabled="{Binding OnOfButtonDownLoad,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"  Click="download_Click">
-                <Image Source="resources/download.png" Height="20" Width="20"></Image>
-            </Button>
-            <Button x:Name="sounds" Style="{StaticResource MainButtonSound}" IsEnabled="{Binding OnOfButtonSound,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Click="sounds_Click">
-                <Image Source="resources/sounds.png" Height="20" Width="20"></Image>
-            </Button>
-            <Button x:Name="games" Style="{StaticResource MainButtonGame}" IsEnabled="{Binding OnOfButtonGame,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Click="games_Click">
-                <Image Source="resources/games.png" Height="20" Width="20"></Image>
-            </Button>
-        </Grid>
-        <!--**************-->
-        <!--Grid Форма загрузки -->
-        <Grid Name="GridDownload" Grid.Column="2"  Visibility="Hidden">
+        <Grid Name="MainGrid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
-                <ColumnDefinition MinWidth="350"></ColumnDefinition>
-                <ColumnDefinition Width="190"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <!--<Grid.Effect>
+            <BlurEffect Radius="10"></BlurEffect>
+            </Grid.Effect>-->
+
+            <!--***********************************************************-->
+            <!--****************  Grid Главное меню  **********************-->
+            <!--***********************************************************-->
+            <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2A2C2C">
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="225"></RowDefinition>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition Height="100"></RowDefinition>
+                    <RowDefinition MinHeight="225"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.Effect>
+                    <BlurEffect Radius="2"></BlurEffect>
+                </Grid.Effect>
+                <!--Кнопки главного меню  -->
+                <Button x:Name="download" Style="{StaticResource MainButtonDownload}" IsEnabled="{Binding OnOfButtonDownLoad,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"  Click="download_Click">
+                    <Image Source="resources/download.png" Height="20" Width="20"></Image>
+                </Button>
+                <Button x:Name="sounds" Style="{StaticResource MainButtonSound}" IsEnabled="{Binding OnOfButtonSound,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Click="sounds_Click">
+                    <Image Source="resources/sounds.png" Height="20" Width="20"></Image>
+                </Button>
+                <Button x:Name="games" Style="{StaticResource MainButtonGame}" IsEnabled="{Binding OnOfButtonGame,  UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Click="games_Click">
+                    <Image Source="resources/games.png" Height="20" Width="20"></Image>
+                </Button>
+            </Grid>
+
+            <!--***********************************************************-->
+            <!--***************  Grid Форма Загрузки  *********************-->
+            <!--***********************************************************-->
+
+            <Grid Name="GridDownload" Grid.Column="2"  Visibility="Hidden" Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition MinWidth="350"></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="250"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Grid.Column="1"  Style="{StaticResource LabelMain}">ЗАГРУЗКА</Label>
+                <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Адрес файла</Label>
+                <TextBox Grid.Row="3" Grid.Column="1" Name="TextBoxAddress" Style="{StaticResource TextBoxBorderLine}" Text="https://laserwar.com/testtask/get?dataType=Json"></TextBox>
+                <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" x:Name="buttonDownload" Style="{StaticResource AccessoryButton}" Content="ЗАГРУЗИТЬ" IsEnabled="{Binding OnOfDownloadJsonButtton}" Click="buttonDownload_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+                <Label Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="LabelStateDownload" Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
+                <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Name="TextBoxJson" Style ="{StaticResource TextBoxMessage}" Visibility="Hidden"/>
+            </Grid>
+            <!--***********************************************************-->
+            <!--*****************  Grid Форма Звука ***********************-->
+            <!--***********************************************************-->
+            <Grid Name="GridSound" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
+                <!--Таблица для вывода звуковых файлов -->
+                <DataGrid x:Name="dataGridSounds" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource DataGridCells}" RowStyle="{StaticResource GridRowStyle}" Grid.Row="2" Grid.Column="1">
+                    <DataGrid.Columns>
+                        <!--Cтолбец Названий композиций -->
+                        <DataGridTextColumn Header="Имя файла" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
+                        <!--Cтолбец Размеров файла -->
+                        <!--<DataGridTextColumn Header="Размер файла" Binding="{Binding Size}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>-->
+                        <DataGridTemplateColumn  Header="Размер файл" MinWidth="150" >
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource LabelGrid}" MinWidth="20"></Label>
+                                        <Label Content="kb" Grid.Column="1" Style="{StaticResource LabelGrid}" Padding="5,0,0,0"></Label>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <!--Скрытый столбец URl -->
+                        <DataGridTextColumn Header="URL" Binding="{Binding URL, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False" Visibility="Hidden"></DataGridTextColumn>
+                        <!--Столбец Загрузки файла -->
+                        <DataGridTemplateColumn  Header="Загрузка файла" MinWidth="220">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="25"></ColumnDefinition>
+                                            <ColumnDefinition></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                        </Grid.RowDefinitions>
+                                        <!--Кнопка загрузки файла -->
+                                        <Button Name="DownloadSound" Grid.Column="0" Style="{StaticResource GridButton}" IsEnabled="{Binding OnOfDowlLoad,  UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="DownloadSound_Click">
+                                            <Image Height="16" Width="16" Source="{Binding DownloadPathIcon}"></Image>
+                                        </Button>
+                                        <StackPanel Grid.Column="1" >
+                                            <!--Label для вывода статуса загрузки файла -->
+                                            <Label Grid.Row="0" Content="Файл загружен" Visibility="{Binding OnOfStateProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,18,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" >
+                                            <!--Прогрессор и Label для вывода процентов -->
+                                            <Label Grid.Row="0" Content="{Binding Percent, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfDownloadProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
+                                            <ProgressBar Name="Percent" Value="{Binding DownloadProgress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPercent, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <!--Столбец Воспроизведения файла -->
+                        <DataGridTemplateColumn  Header="Воспроизвести"  MinWidth="220">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="25"></ColumnDefinition>
+                                            <ColumnDefinition></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                        </Grid.RowDefinitions>
+                                        <!--Кнопка запуска остановки файла -->
+                                        <Button Name="PlaySound" Grid.Column="0" Style="{DynamicResource GridButton}" IsEnabled="{Binding OnOfPlay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="PlaySound_Click">
+                                            <Image Source="{Binding PlayPathIcon}" Height="13" Width="13"></Image>
+                                        </Button>
+                                        <StackPanel Grid.Column="1" >
+                                            <!--Прогрессор и Label для вывода времени прослушки композиции -->
+                                            <Label Grid.Row="0" Visibility="{Binding OnOfTimePlay, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Time, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
+                                            <ProgressBar Name="Time" Value="{Binding PlayProgress, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding MaxPlayTime, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPlayProgress, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!--***********************************************************-->
+            <!--******************  Grid Форма Игра ***********************-->
+            <!--***********************************************************-->
+
+            <Grid Name="GridGames" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}">Игры</Label>
+                <!--Таблица для вывода информации о играх -->
+                <DataGrid x:Name="dataGridGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource DataGridCellsGame}" RowStyle="{StaticResource GridRowStyle}" Grid.Row="2" Grid.Column="1" MouseDoubleClick="dataGridGame_MouseDoubleClick">
+                    <DataGrid.Columns>
+                        <!--Скрытый столбец c уникальным идентификатором игры -->
+                        <DataGridTextColumn Header="id_Game" Binding="{Binding id_Game, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
+                        <!--Cтолбец Название игры -->
+                        <DataGridTextColumn Header="Название игры" Binding="{Binding GameName, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
+                        <!--Cтолбец Дата проведения-->
+                        <DataGridTextColumn Header="Дата проведения" Binding="{Binding GameDate}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="250" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>
+                        <!--Cтолбец количество игроков -->
+                        <DataGridTextColumn Header="Количество игроков" Binding="{Binding QuantityGamers}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="250" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <!--Grid Форма Детализация игры -->
+            <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="80"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Button Name="Return"  Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonReturn}" Click="Return_Click">
+                    <Image Source="resources/back.png" Height="20" Width="20"></Image>
+                </Button>
+                <Label Name="DetailGame" Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}" Content="{Binding DetailGameName}"></Label>
+                <Button Grid.Row="1" Grid.Column="2" x:Name="PublishVK" Style="{StaticResource AccessoryButtonVK}" Content="ОПУБЛИКОВАТЬ В ВК" Margin="0,5,0,30" Click="PublishVK_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="3" x:Name="SavePDF" Style="{StaticResource AccessoryButton}" Content="СОХРАНИТЬ КАК PDF" Margin="0,5,0,30" Click="SavePDF_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+                <!--Таблица для детализации игр-->
+                <DataGrid x:Name="dataGridDetailGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGridDetail}" CellStyle="{StaticResource DataGridCellsDetail}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" MouseDoubleClick="dataGridDetailGame_MouseDoubleClick" PreparingCellForEdit="dataGridDetailGame_PreparingCellForEdit" CellEditEnding="dataGridDetailGame_CellEditEnding">
+                    <DataGrid.GroupStyle>
+                        <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <DataGridRowsPresenter/>
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <!--Скрытый столбец c уникальным идентификатором игры -->
+                        <DataGridTextColumn Header="id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
+                        <!--Столбец c именем Игрока-->
+                        <DataGridTextColumn CanUserSort="False" Header="Игрок" Binding="{Binding GamerName, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="False" Visibility="Visible"></DataGridTextColumn>
+                        <!--Cтолбец Рейтинг-->
+                        <DataGridTextColumn Header="Рейтинг" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="170" HeaderStringFormat="" IsReadOnly="False">
+                            <DataGridTextColumn.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock>Рейтинг</TextBlock>
+                                        <Image Source="~\..\resources\sort.png" Height="20" Width="20" Margin="10,0,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTextColumn.HeaderTemplate>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn CanUserSort="False" Header="Точность" Binding="{Binding Accuracy, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="false" CanUserResize="False"></DataGridTextColumn>
+                        <!--Cтолбец Выстрелы-->
+                        <DataGridTextColumn CanUserSort="False" Header="Выстрелы" Binding="{Binding Shots, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="False" CanUserResize="False"></DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!--***********************************************************-->
+            <!--*****************  Затемняющая панель *********************-->
+            <!--***********************************************************-->
+
+            <StackPanel Name="Shadow" Background="#FF2C2C2C" Grid.ColumnSpan="2" Opacity="0.9" Visibility="Visible">
+                <StackPanel.Effect>
+                    <BlurEffect Radius="10"></BlurEffect>
+                </StackPanel.Effect>
+            </StackPanel>
+        </Grid>
+
+        <!--***********************************************************-->
+        <!--**********************  Grid ВК  **************************-->
+        <!--***********************************************************-->
+
+        <Grid Name="VKGrid" Grid.ColumnSpan="2" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"></RowDefinition>
+                <RowDefinition ></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="70"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <WebBrowser x:Name="webBrowser" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,0" Navigated="WebBrowserNavigated" Visibility="Visible" OpacityMask="WhiteSmoke" Opacity="0" LoadCompleted="webBrowser_LoadCompleted"/>
+                <Button Grid.Row="2" Grid.Column="2" x:Name="CloseVK" Style="{StaticResource AccessoryButtonVK}" Content="Закрыть" Click="CloseVK_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+            </Grid>
+        </Grid>
+
+        <!--***********************************************************-->
+        <!--***********  Детализация параметров игрока  ***************-->
+        <!--***********************************************************-->
+
+        <Grid Name="GamerDetailGrid" Grid.ColumnSpan="2" Visibility="Hidden">
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"></ColumnDefinition>
-                <ColumnDefinition Width="50"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50"></RowDefinition>
-                <RowDefinition Height="80"></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="30"></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
-                <RowDefinition></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Label Grid.Row="1" Grid.Column="1"  Style="{StaticResource LabelMain}">ЗАГРУЗКА</Label>
-            <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Адрес файла</Label>
-            <TextBox Grid.Row="3" Grid.Column="1" Name="TextBoxAddress" Height="20" Width="350"  BorderBrush="Blue" SelectionBrush="White" BorderThickness="0,0,0,2" Background="White" HorizontalAlignment="Left" Margin="5,0,0,10" Text="https://laserwar.com/testtask/get?dataType=Json" Foreground="#FF2C2C2C"></TextBox>
-            <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" x:Name="buttonDownload" Style="{StaticResource AccessoryButton}" Content="ЗАГРУЗИТЬ" IsEnabled="{Binding OnOfDownloadJsonButtton}" Click="buttonDownload_Click"/>
-            <Label Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="LabelStateDownload" Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
-            <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Name="TextBoxJson"  BorderBrush="Blue" SelectionBrush="White" TextWrapping="Wrap" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" BorderThickness="0" Background="White" Visibility="Hidden" Foreground="#FF2C2C2C"/>
-        </Grid>
-        <!--**************-->
-        <!--Grid Форма Звука -->
-        <Grid Name="GridSound" Grid.Column="2" Visibility="Hidden">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="250"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"></RowDefinition>
-                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
                 <RowDefinition ></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}">ЗВУКИ</Label>
-            <!--Таблица для вывода звуковых файлов -->
-            <DataGrid x:Name="dataGridSounds" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource DataGridCells}" RowStyle="{StaticResource GridRowStyle}" Grid.Row="2" Grid.Column="1">
-                <DataGrid.Columns>
-                    <!--Cтолбец Названий композиций -->
-                    <DataGridTextColumn Header="Имя файла" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
-                    <!--Cтолбец Размеров файла -->
-                    <!--<DataGridTextColumn Header="Размер файла" Binding="{Binding Size}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>-->
-                    <DataGridTemplateColumn  Header="Размер файл" MinWidth="150" >
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="{Binding Size, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource LabelGrid}" MinWidth="20"></Label>
-                                    <Label Content="kb" Grid.Column="1" Style="{StaticResource LabelGrid}" Padding="5,0,0,0"></Label>
-                                </StackPanel>
-                            </DataTemplate> 
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <!--Скрытый столбец URl -->
-                    <DataGridTextColumn Header="URL" Binding="{Binding URL, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="150" IsReadOnly="True" CanUserResize="False" Visibility="Hidden"></DataGridTextColumn>
-                    <!--Столбец Загрузки файла -->
-                    <DataGridTemplateColumn  Header="Загрузка файла" MinWidth="220">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="25"></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                    </Grid.RowDefinitions>
-                                    <!--Кнопка загрузки файла -->
-                                    <Button Name="DownloadSound" Grid.Column="0" Style="{StaticResource GridButton}" IsEnabled="{Binding OnOfDowlLoad,  UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="DownloadSound_Click">
-                                        <Image Height="16" Width="16" Source="{Binding DownloadPathIcon}"></Image>
-                                    </Button>
-                                    <StackPanel Grid.Column="1" >
-                                        <!--Label для вывода статуса загрузки файла -->
-                                        <Label Grid.Row="0" Content="Файл загружен" Visibility="{Binding OnOfStateProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,18,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" >
-                                        <!--Прогрессор и Label для вывода процентов -->
-                                        <Label Grid.Row="0" Content="{Binding Percent, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfDownloadProgress, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
-                                        <ProgressBar Name="Percent" Value="{Binding DownloadProgress, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPercent, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <!--Столбец Воспроизведения файла -->
-                    <DataGridTemplateColumn  Header="Воспроизвести"  MinWidth="220">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="25"></ColumnDefinition>
-                                        <ColumnDefinition></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                    </Grid.RowDefinitions>
-                                    <!--Кнопка запуска остановки файла -->
-                                    <Button Name="PlaySound" Grid.Column="0" Style="{DynamicResource GridButton}" IsEnabled="{Binding OnOfPlay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Click="PlaySound_Click">
-                                        <Image Source="{Binding PlayPathIcon}" Height="13" Width="13"></Image>
-                                    </Button>
-                                    <StackPanel Grid.Column="1" >
-                                        <!--Прогрессор и Label для вывода времени прослушки композиции -->
-                                        <Label Grid.Row="0" Visibility="{Binding OnOfTimePlay, UpdateSourceTrigger=PropertyChanged}" Content="{Binding Time, UpdateSourceTrigger=PropertyChanged}" Height="15" Margin="5,14,0,0" FontSize="9" Foreground="#FF2C2C2C" Padding="0" VerticalContentAlignment="Bottom" UseLayoutRounding="False"></Label>
-                                        <ProgressBar Name="Time" Value="{Binding PlayProgress, UpdateSourceTrigger=PropertyChanged}" Maximum="{Binding MaxPlayTime, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding OnOfPlayProgress, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Width="120" Height="2" Margin="5,3,0,0" Foreground="Blue" Background="#FFC5C5C5" BorderThickness="1" HorizontalAlignment="Left"></ProgressBar>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="20"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"></RowDefinition>
+                    <RowDefinition Height="60"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Style="{StaticResource LabelMain}">РЕДАКТИРОВАНИЕ ИГРОКА</Label>
+                <Label Name="CommandName" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" FontSize="20" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C"></Label>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3"  Grid.ColumnSpan="3">
+                    <Label Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Имя игрока</Label>
+                    <TextBox Name="TextBoxGamerName" Style="{StaticResource TextBoxBorderLine}" ></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="4"  Grid.ColumnSpan="3">
+                    <Label Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Рейтинг</Label>
+                    <TextBox Name="TextBoxGamerRating" Style="{StaticResource TextBoxBorderLine}" LostFocus="TextBoxGamerRating_LostFocus"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="5"  Grid.ColumnSpan="3">
+                    <Label Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Точность</Label>
+                    <TextBox Name="TextBoxGamerAccuracy" Style="{StaticResource TextBoxBorderLine}" LostFocus="TextBoxGamerAccuracy_LostFocus"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="6"  Grid.ColumnSpan="3">
+                    <Label Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Выстрелы</Label>
+                    <TextBox Name="TextBoxGamerShots" Style="{StaticResource TextBoxBorderLine}" LostFocus="TextBoxGamerShots_LostFocus"></TextBox>
+                </StackPanel>
+
+                <Button Grid.Row="7" Grid.Column="2" x:Name="DisAgree" Style="{StaticResource AccessoryButtonVK}" Content="Отменить" Click="DisAgree_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+                <Button Grid.Row="7" Grid.Column="3" x:Name="Agree" Style="{StaticResource AccessoryButton}" Content="СОХРАНИТЬ" Click="Agree_Click" >
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+
+            </Grid>
         </Grid>
-        <!--**************-->
-        <!--Grid Форма Игра -->
-        <Grid Name="GridGames" Grid.Column="2" Visibility="Hidden">
+
+        <!--***********************************************************-->
+        <!--******************  Форма Сообщений ***********************-->
+        <!--***********************************************************-->
+
+        <Grid Name="MessageGrid" Grid.ColumnSpan="2" Visibility="Hidden" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"></RowDefinition>
-                <RowDefinition Height="80"></RowDefinition>
+                <RowDefinition Height="200"></RowDefinition>
                 <RowDefinition ></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="200"></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}">Игры</Label>
-            <!--Таблица для вывода информации о играх -->
-            <DataGrid x:Name="dataGridGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGrid}" CellStyle="{StaticResource DataGridCellsGame}" RowStyle="{StaticResource GridRowStyle}" Grid.Row="2" Grid.Column="1" MouseDoubleClick="dataGridGame_MouseDoubleClick">
-                <DataGrid.Columns>
-                    <!--Скрытый столбец c уникальным идентификатором игры -->
-                    <DataGridTextColumn Header="id_Game" Binding="{Binding id_Game, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
-                    <!--Cтолбец Название игры -->
-                    <DataGridTextColumn Header="Название игры" Binding="{Binding GameName, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True"></DataGridTextColumn>
-                    <!--Cтолбец Дата проведения-->
-                    <DataGridTextColumn Header="Дата проведения" Binding="{Binding GameDate}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="250" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>
-                    <!--Cтолбец количество игроков -->
-                    <DataGridTextColumn Header="Количество игроков" Binding="{Binding QuantityGamers}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="250" IsReadOnly="True" CanUserResize="False"></DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="190"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="43"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Style="{StaticResource LabelMain}">ПРОИЗОШЛА ОШИБКА</Label>
+                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="TextBoxError" Style ="{StaticResource TextBoxMessage}" Visibility="Visible"/>
+                <Button Grid.Row="3" Grid.Column="2" x:Name="CloseMessage" Style="{StaticResource AccessoryButton}" Content="Закрыть" Click="CloseMessage_Click">
+                    <Button.Effect>
+                        <BlurEffect Radius="1.7"></BlurEffect>
+                    </Button.Effect>
+                </Button>
+            </Grid>
+
         </Grid>
-        <!--Grid Форма Детализация игры -->
-        <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="Visible">
+        
+        <!--***********************************************************-->
+        <!--**********************  АНИМАЦИЯ **************************-->
+        <!--***********************************************************-->
+
+        <Grid Name="AnimationGrid" Grid.ColumnSpan="2" Visibility="Visible">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="190"></ColumnDefinition>
-                <ColumnDefinition Width="190"></ColumnDefinition>
-                <ColumnDefinition Width="50"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"></RowDefinition>
-                <RowDefinition Height="80"></RowDefinition>
                 <RowDefinition ></RowDefinition>
-                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="40"></RowDefinition>
+                <RowDefinition ></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Name="Return"  Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonReturn}" Click="Return_Click">
-                <Image Source="resources/back.png" Height="20" Width="20"></Image>
-            </Button>
-            <Label Name="DetailGame" Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelMain}" Content="{Binding DetailGameName}"></Label>
-            <Button Grid.Row="1" Grid.Column="2" x:Name="PublishVK" Style="{StaticResource AccessoryButtonVK}" Content="ОПУБЛИКОВАТЬ В ВК" Margin="0,5,0,30" Click="PublishVK_Click"/>
-            <Button Grid.Row="1" Grid.Column="3" x:Name="SavePDF" Style="{StaticResource AccessoryButton}" Content="СОХРАНИТЬ КАК PDF" Margin="0,5,0,30" Click="SavePDF_Click"/>
-            <!--Таблица для детализации игр-->
-            <DataGrid x:Name="dataGridDetailGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGridDetail}" CellStyle="{StaticResource DataGridCellsDetail}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" MouseDoubleClick="dataGridDetailGame_MouseDoubleClick" PreparingCellForEdit="dataGridDetailGame_PreparingCellForEdit" CellEditEnding="dataGridDetailGame_CellEditEnding">
-                <DataGrid.GroupStyle>
-                    <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
-                        <GroupStyle.Panel>
-                            <ItemsPanelTemplate>
-                                <DataGridRowsPresenter/>
-                            </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
-                    </GroupStyle>
-                </DataGrid.GroupStyle>
-                <DataGrid.Columns>
-                    <!--Скрытый столбец c уникальным идентификатором игры -->
-                    <DataGridTextColumn Header="id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
-                    <!--Столбец c именем Игрока-->
-                    <DataGridTextColumn CanUserSort="False" Header="Игрок" Binding="{Binding GamerName, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="True" Visibility="Visible"></DataGridTextColumn>
-                    <!--Cтолбец Рейтинг-->
-                    <DataGridTextColumn Header="Рейтинг" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="170" HeaderStringFormat="" IsReadOnly="False">
-                        <DataGridTextColumn.HeaderTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock>Рейтинг</TextBlock>
-                                    <Image Source="~\..\resources\sort.png" Height="20" Width="20" Margin="10,0,0,0" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn CanUserSort="False" Header="Точность" Binding="{Binding Accuracy, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="false" CanUserResize="False"></DataGridTextColumn>
-                    <!--Cтолбец Выстрелы-->
-                    <DataGridTextColumn CanUserSort="False" Header="Выстрелы" Binding="{Binding Shots, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="False" CanUserResize="False"></DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Canvas Grid.Column="1" Grid.Row="1" Width="40" Height="40" >
+                <Path Stroke="WhiteSmoke" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                    <Path.Data>
+                        <PathGeometry>
+                            <PathFigure StartPoint="20,0">
+                                <ArcSegment Point="0,20" Size="20,20"></ArcSegment>
+                                <ArcSegment Point="20,40" Size="20,20"></ArcSegment>
+                                <ArcSegment Point="40,20" Size="20,20"></ArcSegment>
+                                <ArcSegment Point="35,7" Size="20,20"></ArcSegment>
+                            </PathFigure>
+                        </PathGeometry>
+                    </Path.Data>
+                    <Path.RenderTransform>
+                        <RotateTransform x:Name="AnimatedRotateTransform" Angle="0" CenterX="20" CenterY="20" />
+                    </Path.RenderTransform>
+                    <Path.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="AnimatedRotateTransform"
+                                                         Storyboard.TargetProperty="Angle" 
+                                                         To="-360" Duration="0:0:2" RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Path.Triggers>
+                    <Path.Effect>
+                        <BlurEffect Radius="3"></BlurEffect>
+                    </Path.Effect>
+                </Path>
+            </Canvas>
         </Grid>
     </Grid>
 </Window>

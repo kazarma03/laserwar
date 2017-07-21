@@ -9,8 +9,9 @@
         <Setter Property="AutoGenerateColumns" Value="False"></Setter>
         <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
         <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
-        <Setter Property="Background" Value="White"></Setter>
-        <Setter Property="AlternatingRowBackground" Value="White"></Setter>
+        <Setter Property="Background" Value="WhiteSmoke"></Setter>
+        <Setter Property="AlternatingRowBackground" Value="WhiteSmoke"></Setter>
+        <Setter Property="RowBackground" Value="WhiteSmoke"></Setter>
         <Setter Property="BorderThickness" Value="0"></Setter>
         <Setter Property="GridLinesVisibility" Value="Horizontal"></Setter>
         <Setter Property="HorizontalGridLinesBrush" Value="#FFC5C5C5"></Setter>
@@ -24,7 +25,7 @@
     </Style>
 
     <Style x:Key="GridHeader" TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="Background" Value="WhiteSmoke"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="Height" Value="75"></Setter>
         <Setter Property="VerticalAlignment" Value="Top"></Setter>
@@ -38,8 +39,9 @@
         <Setter Property="AutoGenerateColumns" Value="False"></Setter>
         <Setter Property="BorderBrush" Value="{x:Null}"></Setter>
         <Setter Property="Foreground" Value="#FF2C2C2C"></Setter>
-        <Setter Property="Background" Value="White"></Setter>
-        <Setter Property="AlternatingRowBackground" Value="White"></Setter>
+        <Setter Property="RowBackground" Value="WhiteSmoke"></Setter>
+        <Setter Property="Background" Value="WhiteSmoke"></Setter>
+        <Setter Property="AlternatingRowBackground" Value="WhiteSmoke"></Setter>
         <Setter Property="BorderThickness" Value="0"></Setter>
         <Setter Property="GridLinesVisibility" Value="Horizontal"></Setter>
         <Setter Property="HorizontalGridLinesBrush" Value="#FFC5C5C5"></Setter>
@@ -53,7 +55,7 @@
         <Setter Property="SelectionUnit" Value="Cell"></Setter>
     </Style>
     <Style x:Key="GridHeaderDetail" TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="White"></Setter>
+        <Setter Property="Background" Value="WhiteSmoke"></Setter>
         <Setter Property="FontWeight" Value="Bold"></Setter>
         <Setter Property="Height" Value="75"></Setter>
         <Setter Property="VerticalAlignment" Value="Top"></Setter>
@@ -65,7 +67,7 @@
     <Style x:Key="DataGridCells" TargetType="DataGridCell">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="WhiteSmoke" />
                 <Setter Property="Foreground" Value="#FF2C2C2C" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
             </Trigger>
@@ -75,7 +77,7 @@
     <Style x:Key="DataGridCellsGame" TargetType="DataGridCell">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="WhiteSmoke" />
                 <Setter Property="Foreground" Value="Blue" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
             </Trigger>
@@ -85,7 +87,7 @@
     <Style x:Key="DataGridCellsDetail" TargetType="DataGridCell">
         <Style.Triggers>
             <Trigger Property="DataGridCell.IsSelected" Value="True">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="WhiteSmoke" />
                 <Setter Property="Foreground" Value="#FF2C2C2C" />
                 <Setter Property="BorderThickness" Value="0 0 0 2" />
                 <Setter Property="BorderBrush" Value="Blue" />
@@ -102,7 +104,7 @@
     <Style x:Key="GridRowStyle" TargetType="DataGridRow">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="WhiteSmoke" />
                 <Setter Property="Foreground" Value="#FF2C2C2C" />
                 <Setter Property="BorderBrush" Value="{x:Null}" />
             </Trigger>

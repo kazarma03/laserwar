@@ -22,8 +22,9 @@ C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.Linq.dll
 C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.xml
 C:\test\TestLaserwar\TestLaserwar\bin\Debug\EntityFramework.SqlServer.xml
 C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Data.SQLite.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\itextsharp.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\itextsharp.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\xNet.dll
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\OtherElement.baml
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\ScrollBar.baml
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\Grid.baml
-C:\test\TestLaserwar\TestLaserwar\bin\Debug\itextsharp.dll
-C:\test\TestLaserwar\TestLaserwar\bin\Debug\itextsharp.xml
