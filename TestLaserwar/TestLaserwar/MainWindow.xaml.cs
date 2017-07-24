@@ -5,17 +5,21 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Net;
-using System.Web;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Navigation;
+using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using System.Xml;
-using System.Configuration;
-using System.Windows.Media.Effects;
+using VkNet;
+using VkNet.Enums.Filters;
+using VkNet.Model.Attachments;
+using VkNet.Model.RequestParams;
 
 
 namespace TestLaserwar
@@ -31,16 +35,19 @@ namespace TestLaserwar
             Loaded += MainWindow_Loaded;          
         }
 
+        Error Err = new Error();
+
         /// <summary>
         /// Загрузка главного окна
         /// </summary>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false,false,false, false, false, false);
+            RefMainMenu(true, false, false,false,false, false, false, false, false, false, false, false);
             
             dataGridSounds.ItemsSource = bindSoundTabel;
             dataGridGame.ItemsSource =bindGameTabel;
             DetailGame.DataContext = LabelDetail;
+            TextBoxError.DataContext = Err;
 
             buttonDownload.DataContext = but;
             download.DataContext = but;
@@ -68,10 +75,19 @@ namespace TestLaserwar
         /// <summary>
         /// Обновление форм при переходах
         /// </summary>
-        /// <param name="dkey"> если true форма Загрузки отображается, если false форма скрыта </param>
-        /// <param name="skey"> если true форма Звука отображается, если false форма скрыта</param>
-        /// <param name="gkey"> если true форма Игра отображается, если false форма скрыта </param>
-        private void RefMainMenu(bool dkey, bool skey, bool gkey, bool gdkey, bool gdgkey, bool VKkey, bool Skey, bool Akey)
+        /// <param name="dkey">Фрма загрузки JSON</param>
+        /// <param name="skey">Форма звука</param>
+        /// <param name="gkey">Форма игр</param>
+        /// <param name="gdkey">Форма детализации игр</param>
+        /// <param name="gdgkey">Форма детализации параметров игрока</param>
+        /// <param name="VKkey">Форма ВК</param>
+        /// <param name="VKAkey">Форма Аутентификации ВК на форме ВК</param>
+        /// <param name="VKSkey">Форма отправки Поста в ВК на формме ВК</param>
+        /// <param name="Skey">Затемнение главнйх форм</param>
+        /// <param name="SSkey">Затемнение вспомогательных форм</param>
+        /// <param name="Akey">Анимация</param>
+        /// <param name="Mkey">Сообщение об ошибке</param>
+        private void RefMainMenu(bool dkey, bool skey, bool gkey, bool gdkey, bool gdgkey, bool VKkey, bool VKAkey, bool VKSkey, bool Skey, bool SSkey, bool Akey, bool Mkey )
         {
             if (dkey)
             {
@@ -130,12 +146,31 @@ namespace TestLaserwar
             {
                 VKGrid.Visibility = Visibility.Hidden;
             }
+            if (VKAkey)
+            {                
+               
+                AuthenticationGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                AuthenticationGrid.Visibility = Visibility.Hidden;
+            }
+
+            if (VKSkey)
+            {
+                CreatePostVK.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CreatePostVK.Visibility = Visibility.Hidden;
+            }
+
             if (Skey)
             {
                 Shadow.Visibility = Visibility.Visible;
 
                 BlurEffect objBlur = new BlurEffect();
-                objBlur.Radius = 12;
+                objBlur.Radius = 7;
                 MainGrid.Effect = objBlur;
             }
             else
@@ -143,6 +178,20 @@ namespace TestLaserwar
                 Shadow.Visibility = Visibility.Hidden;
                 MainGrid.Effect = null;
             }
+            if (SSkey)
+            {
+                ShadowSub.Visibility = Visibility.Visible;
+
+                BlurEffect objBlur = new BlurEffect();
+                objBlur.Radius = 7;
+                MainGrid.Effect = objBlur;
+            }
+            else
+            {
+                ShadowSub.Visibility = Visibility.Hidden;
+                MainGrid.Effect = null;
+            }
+
             if (Akey)
             {
                 AnimationGrid.Visibility = Visibility.Visible;
@@ -150,24 +199,30 @@ namespace TestLaserwar
             else
             {
                 AnimationGrid.Visibility = Visibility.Hidden;
+            }                 
+            if (Mkey)
+            {
+                MessageGrid.Visibility = Visibility.Visible;
             }
-           
-
+            else
+            {
+                MessageGrid.Visibility = Visibility.Hidden;
+            }
         }
 
         private void download_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false,false, false, false, false, false);
+            RefMainMenu(true, false, false,false, false, false, false, false, false, false, false, false);
         }
 
         private void sounds_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, true, false,false, false, false, false, false);
+            RefMainMenu(false, true, false,false, false, false, false, false, false, false, false, false);
         }
 
         private void games_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, true,false, false, false, false, false);
+            RefMainMenu(false, false, true,false, false, false, false, false, false, false, false, false);
             GetGameData();
         }
 
@@ -257,7 +312,7 @@ namespace TestLaserwar
 
             // ------------------------------------------------------------------------
 
-            WebClient client = new WebClient();
+            System.Net.WebClient client = new System.Net.WebClient();
             JObject jObject;
             string data = null;
             // true- JSON объект содержит необходимые данные, false- данных для вывода нет
@@ -381,8 +436,8 @@ namespace TestLaserwar
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
                 LabelStateDownload.Visibility = Visibility.Visible;
-                but.OnOfDownloadJsonButtton = true;
-                RefMainMenu(true, false, false, false, false, false, false, false);
+              //  but.OnOfDownloadJsonButtton = true;
+                RefMainMenu(true, false, false, false, false, false, false, false, false, false, false, false);
             });
             
         }
@@ -393,8 +448,8 @@ namespace TestLaserwar
         /// </summary>
         private void buttonDownload_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false, false, false, false, true, true);
-            but.OnOfDownloadJsonButtton = false;
+            RefMainMenu(true, false, false, false, false, false, true, true, true, false, true, false);
+           // but.OnOfDownloadJsonButtton = false;
             TextBoxJson.Visibility = Visibility.Hidden;
             LabelStateDownload.Visibility = Visibility.Hidden;
             //до очисктки таблицы останавливаем воспроизведение если оно было активным
@@ -405,10 +460,12 @@ namespace TestLaserwar
             th.Start();
         }
 
+
         //****************************************************************
         //*******************        ЗВУКИ         ***********************
         //****************************************************************
       
+
         /// <summary>
         /// Лист экземпляров класса SoundTable для удобного обращения к ячейкам таблицы звуков
         /// </summary>
@@ -484,7 +541,7 @@ namespace TestLaserwar
         /// <param name="ind"> индекс текущего обрабатываемого элемента</param>
         public void DownloadingSound(int ind)
         {                       
-            using (WebClient client = new WebClient())
+            using ( System.Net.WebClient client = new System.Net.WebClient())
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Reset();
@@ -702,7 +759,7 @@ namespace TestLaserwar
                 //получаем уникальный идентификатор игры
                 int id_game = bindGameTabel[dataGridGame.Items.IndexOf(dataGridGame.CurrentItem)].id_Game;
                 int count = bindGameTabel.Count;
-                RefMainMenu(false, false, false, true, false, false, false, false);
+                RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
                 ID = id_game;
                 FillGameDetail(id_game);
             }
@@ -712,6 +769,7 @@ namespace TestLaserwar
         //****************************************************************
         //*******************   Детализаци  ИГРЫ   ***********************
         //****************************************************************
+
 
         LabelDetailGameTable LabelDetail = new LabelDetailGameTable();
 
@@ -763,7 +821,7 @@ namespace TestLaserwar
         /// </summary>
         private void Return_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, true, false, false, false, false, false);
+            RefMainMenu(false, false, true, false, false, false, false, false, false, false, false, false);
 
             GetGameData();
         }
@@ -912,86 +970,26 @@ namespace TestLaserwar
             }
         }
 
-
-
-
         /// <summary>
         ///  Нажатие кнопки сохранения детализации игры в PDF
         /// </summary>
         private void SavePDF_Click(object sender, RoutedEventArgs e)
         {
             PDF pdf = new TestLaserwar.PDF();
-            Thread PDF_CREATOR = new Thread(() => pdf.CreatePDF(ID));
+            Thread PDF_CREATOR = new Thread(() => pdf.CreatePDF(ID, true));
             PDF_CREATOR.Start();
             
         }
 
-        private void PublishVK_Click(object sender, RoutedEventArgs e)
-        {
-
-            RefMainMenu(false, false, false, false, false, true, true, false);
-            webBrowser.Navigate(String.Format("https://oauth.vk.com/authorize?client_id={0}&scope={1}&redirect_uri={2}&display=page&response_type=token", ConfigurationSettings.AppSettings["VKAppId"], ConfigurationSettings.AppSettings["VKScope"], ConfigurationSettings.AppSettings["VKRedirectUri"]));
-
-        }
-
-        private void WebBrowserNavigated(object sender, NavigationEventArgs e)
-        {
-            // Удаляем #
-            var clearUriFragment = e.Uri.Fragment.Replace("#", "").Trim();
-            // разбиваем строку на фрагменты
-            var parameters = HttpUtility.ParseQueryString(clearUriFragment);
-            // Пытаемся получить токен
-            Vk.AccessToken = parameters.Get("access_token");
-            // Пытаемся получить идентификатор авторизованного пользователя
-            Vk.UserId = parameters.Get("user_id");
-
-            if (Vk.AccessToken != null && Vk.UserId != null)
-            {
-                webBrowser.Visibility = Visibility.Hidden;
-            }
-
-            if (Vk.AccessToken != "")
-            {
-                try
-                {
-
-
-                    vkWallPost vk = new vkWallPost(Vk.AccessToken);   //создается класс с методами для вконтакте, ему передается токен
-
-                    //Помещаем метод в поток, т.к. в противном случае будет тормозить
-                    var thread = new Thread(() =>
-                    {
-                    //Отправляем фотку в Вконтакте
-                    string s=vk.AddWallPost(2549171, "Т7777777777777777" + DateTime.Now.ToString("dd MMMM yyyy | HH:mm: ss"), @"~\..\resources\downloaded_sound.png");
-                    });
-                    thread.Start();
-
-                }
-                catch (Exception) { }
-                finally
-                {
-                }
-            }
-        }
-
-        private void webBrowser_LoadCompleted(object sender, NavigationEventArgs e)
-        {
-            webBrowser.OpacityMask = null;
-            webBrowser.Opacity = 1;
-        }
-        private void CloseVK_Click(object sender, RoutedEventArgs e)
-        {
-            RefMainMenu(false, false, false, true, false, false, false, false);
-            FillGameDetail(ID);
-        }
-
+     
         //****************************************************************
         //*****************   Редактирование игрока  *********************
         //****************************************************************
 
+
         private void DisAgree_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, false, true, false, false, false, false);
+            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
             FillGameDetail(ID);
         }
 
@@ -1017,7 +1015,7 @@ namespace TestLaserwar
        
             SQL.SqlUpdateSinglefield(tabelEvents, "shots", TextBoxGamerShots.Text, "id ='" + Prep_id + "'");
 
-            RefMainMenu(false, false, false, true, false, false, false, false);
+            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
             FillGameDetail(ID);
 
         }
@@ -1045,7 +1043,7 @@ namespace TestLaserwar
                 TextBoxGamerRating.Text = GamerProperty.Rows[0][2].ToString();
                 TextBoxGamerAccuracy.Text = Convert.ToString(Convert.ToDouble(GamerProperty.Rows[0][3])*100) +" %";
                 TextBoxGamerShots.Text = GamerProperty.Rows[0][4].ToString();
-                RefMainMenu(false, false, false, false, true, false, true, false);
+                RefMainMenu(false, false, false, true, true, false, false, false, true, false, false, false);
             }
         }
 
@@ -1063,16 +1061,323 @@ namespace TestLaserwar
         {
             TextBoxGamerShots.Text = convertTexttoInttoText(TextBoxGamerShots.Text, GamerProperty.Rows[0][4].ToString(), false);
         }
-
+   
 
         //****************************************************************
         //*************************   Ошибки  ****************************
         //****************************************************************
 
+
         private void CloseMessage_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false, false, false, false, false, false);
+            RefMainMenu(true, false, false, false, false, false, false, false, false, false, false, false);
         }
+
+
+        //****************************************************************
+        //***************************  VK  *******************************
+        //****************************************************************
+
+
+
+
+        /// <summary>
+        /// коллекция групп ВК
+        /// </summary>
+        List<VKGroup> Groups = new List<VKGroup>();
+        /// <summary>
+        /// Экземпляр класса VkApi
+        /// </summary>
+        VkApi api;
+
+        /// <summary>
+        /// открытие формы отправки поста в ВК
+        /// </summary>
+        private void PublishVK_Click(object sender, RoutedEventArgs e)
+        {
+            RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+
+        }
+
+        /// <summary>
+        /// Клик на вход в ВК
+        /// </summary>
+        private void Connect_Click(object sender, RoutedEventArgs e)
+        {
+            RefMainMenu(false, false, false, false, false, true, true, false, true, true, true, false);
+            ComboBoxVK.ItemsSource = Groups;
+    
+            Thread VK_connector = new Thread(FormFillSenderVK);
+            VK_connector.Start();
+        }
+
+        /// <summary>
+        /// Заполнение формы постинга в ВК
+        /// </summary>
+        private void FormFillSenderVK()
+        {
+            // проходим аутентификацию
+            api = ConnectVK();
+            if (api.Token != null)
+            {
+                // формируем список групп аутентифицированного пользователя   
+                var groups = api.Groups.Get(new GroupsGetParams() { UserId = api.UserId.Value, Extended = true, Filter = null, Fields = GroupsFields.All }).ToList();
+                foreach (var g in groups)
+                {
+                    // ComboBoxVK.Items.Add(new KeyValuePair<long, string>(g.Id, g.Name));
+                    Groups.Add(new VKGroup(g.Id, g.Name));
+                }
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    //Отображаем форму постинга
+                    ComboBoxVK.SelectedIndex = 0;
+                    RefMainMenu(false, false, false, false, false, true, false, true, true, false, false, false);
+                });
+            }
+            else
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    //Отображаем сообщение об ошибке
+                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                    RefMainMenu(false, false, false, false, false, false, false, false, true, false, false, true);
+                    Err.ErrorMessage = "Не удалось установить соединение. Проверьте правильности имени пользователя и пароля.";
+                });
+            }
+        }
+
+        /// <summary>
+        /// Закрытие формы аутентификации
+        /// </summary>
+        private void CloseVK_Click(object sender, RoutedEventArgs e)
+        {
+            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+        }
+
+        /// <summary>
+        /// Аутентификация в ВК по паре логин пароль + ID приложения
+        /// </summary>
+        private VkApi ConnectVK()
+        {
+            VkApi api = new VkApi();
+            string login="";
+            string password="";
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                login = LoginVk.Text;
+                password = PasswordVK.Password;
+            });
+            Thread.Sleep(1000);
+            try
+            {
+                api.Authorize(new ApiAuthParams
+                {
+                    ApplicationId = 6120538,
+                    Login = login,
+                    Password = password,
+                    Settings = Settings.All
+                });
+            }
+            catch (Exception ex)
+            {               
+                return api;
+            }
+            
+            return api;           
+        }
+
+
+        /// <summary>
+        /// Постинг в ВК
+        /// </summary>
+        private void SendVKpost()
+        {
+            string PDFFileName = "";
+
+            var wc = new WebClient();
+            List<MediaAttachment> attachments = new List<MediaAttachment>();
+            bool keyDoc = false;
+            bool keyScreen = false;
+            VKGroup Group = new VKGroup(0,"");
+            string Mes = "";
+
+            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+            {
+                Mes = TextBoxVK.Text;
+                if (DocVk.IsChecked ?? false) keyDoc = true;       
+                if (ScreenVK.IsChecked ?? false) keyScreen = true;
+                Group = (VKGroup)ComboBoxVK.SelectedValue;
+            });
+            Thread.Sleep(1000);
+
+            //Если необходимо добавидь документ, как вложение к посту
+            if (keyDoc)
+            {
+                PDF pdf = new PDF();
+                PDFFileName = pdf.CreatePDF(ID, false);
+
+                // Загрузить файл.
+                wc = new WebClient();
+                try
+                {
+                    //// Получить адрес сервера для загрузки.
+                    var uploadDocServer = api.Docs.GetUploadServer();
+                    var responseFile = Encoding.ASCII.GetString(wc.UploadFile(uploadDocServer.UploadUrl, PDFFileName));
+                    // Сохранить загруженный файл
+                    var doc = api.Docs.Save(responseFile, PDFFileName);
+                    attachments.Add((MediaAttachment)doc[0]);
+                }
+                catch (Exception ex)
+                {
+                }
+            }  
+            //Если необходимо добавить скриншот в пост
+            if (keyScreen)
+            {
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    // Переделываем указанный элемент в .png
+                    ScreenShotElement.SaveToPNG(ParentGrid, "ScreenShot");
+                });
+
+                Thread.Sleep(1000);
+
+                var getAlbums = api.Photo.GetAlbums(new PhotoGetAlbumsParams{});
+                long AlbumId = 0;
+                bool albumFind = false;
+                //Ищем альбом у пользователя
+                for (int i = 0; i < getAlbums.Count; i++)
+                {
+                    if (getAlbums[i].Title == "TestLaserwarGames")
+                    {
+                        albumFind = true;
+                        AlbumId = getAlbums[i].Id;
+                        break;
+                    }
+                }
+                //если альбом не был найден, создаём новый
+                if (!albumFind)
+                {
+                    var createAlbum = api.Photo.CreateAlbum(new PhotoCreateAlbumParams
+                    {
+                        Title = "TestLaserwarGames"
+                    });
+                    AlbumId = createAlbum.Id;
+                }
+                
+                // Загрузить фото.
+                wc = new WebClient();
+                try
+                {
+                    // Получить адрес сервера для загрузки.
+                    var uploadPhotoServer = api.Photo.GetUploadServer(AlbumId);
+                    // Загрузить файл.
+                    var responseFile = Encoding.ASCII.GetString(wc.UploadFile(uploadPhotoServer.UploadUrl, @"ScreenShot.png"));
+                    // Сохранить загруженный файл
+                    var photos = api.Photo.Save(new PhotoSaveParams
+                    {
+                        SaveFileResponse = responseFile,
+                        AlbumId = AlbumId
+                    });
+                    attachments.Add((MediaAttachment)photos[0]);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }            
+
+            double? la = null;
+            double? lo = null;
+
+            //GeoCoordinate location = new GeoCoordinate();
+
+            //var immediate = new ImmediateLocation(x => location = x);
+            //immediate.GetLocation();
+
+            //if (location.IsUnknown == false)
+            //{
+            //    la = location.Latitude;
+            //    lo = location.Longitude;
+
+            //}
+            //else
+            //{
+            //    IpLocation _IpLocation = new IpLocation();
+            //    _IpLocation.GetCountryByIP();
+            //    _IpLocation.Lat = _IpLocation.Lat.Replace(".", ",");
+            //    _IpLocation.Lon = _IpLocation.Lon.Replace(".", ",");
+            //    la = Convert.ToDouble(_IpLocation.Lat);
+            //    lo = Convert.ToDouble(_IpLocation.Lon);
+            //}
+
+            try
+            {
+                // Постинг на стену
+                var post = api.Wall.Post(new WallPostParams
+                {
+                    OwnerId = -Group.ID,
+                    FriendsOnly = true,
+                    FromGroup = false,
+                    Message = Mes,
+                    Attachments = attachments,
+                    Services = null,
+                    Signed = true,
+                    PublishDate = null,
+                    Lat = la,
+                    Long = lo,
+                    PlaceId = null,
+                    PostId = null,
+                    CaptchaSid = null,
+                    CaptchaKey = null
+                });
+                // если создавались вложения и скрин, удаляем их
+                if(keyDoc)File.Delete(PDFFileName);
+                if(keyScreen)File.Delete(@"ScreenShot.png");
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+                });
+            }
+            catch (Exception ex)
+            {
+                // если создавались вложения и скрин, удаляем их
+                if (keyDoc) File.Delete(PDFFileName);
+                if (keyScreen) File.Delete(@"ScreenShot.png");
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    //Отображаем сообщение об ошибке
+                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                    RefMainMenu(false, false, false, false, false, false, false, false, true, false, false, true);
+                    Err.ErrorMessage = "Не удалось опубликовать пост. Попробуйте повторить попытку.";
+                });
+            }
+        }
+
+        /// <summary>
+        /// Опубликовать пост
+        /// </summary>
+        private void SendVK_Click(object sender, RoutedEventArgs e)
+        {
+            
+            RefMainMenu(false, false, false, false, false, true, false, true, true, true, true, false);
+          
+            ComboBoxVK.ItemsSource = Groups;
+
+            Thread VK_Posting = new Thread(SendVKpost);
+            VK_Posting.Start();
+            //SendVKpost();          
+        }
+
+        /// <summary>
+        /// Выйти из публикации ВК
+        /// </summary>
+        private void CloseSend_Click(object sender, RoutedEventArgs e)
+        {
+            api.Dispose();
+            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+        }
+
 
     }
 }

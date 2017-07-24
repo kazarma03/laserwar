@@ -89,7 +89,7 @@
             <Trigger Property="DataGridCell.IsSelected" Value="True">
                 <Setter Property="Background" Value="WhiteSmoke" />
                 <Setter Property="Foreground" Value="#FF2C2C2C" />
-                <Setter Property="BorderThickness" Value="0 0 0 2" />
+                <Setter Property="BorderThickness" Value="0 0 0 1" />
                 <Setter Property="BorderBrush" Value="Blue" />
                 <!--<Setter Property="FrameworkElement.HorizontalAlignment" Value="Left"></Setter>-->
                 <Setter Property="FrameworkElement.VerticalAlignment" Value="Bottom"></Setter>
@@ -116,9 +116,18 @@
     <Style x:Key="GridTetxBlock" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Background" Value="WhiteSmoke" />
     </Style>
     <!--________________________-->
 
+    <!--Стиль EditingTetxBlock ячейки в процессе редактирования-->
+    <Style x:Key="EditingTetxBlock" TargetType="TextBox">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Background" Value="WhiteSmoke" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <!--________________________-->
     <!--Стиль кнопок в таблице-->
     <Style x:Key="GridButton" TargetType="Button">
         <Setter Property="BorderBrush" Value="{x:Null}"></Setter>

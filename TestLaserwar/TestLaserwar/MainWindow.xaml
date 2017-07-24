@@ -36,19 +36,17 @@
         
     </Window.Resources>
 
-    <Grid>
+    <Grid Name="ParentGrid">
         <Grid Name="MainGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <!--<Grid.Effect>
-            <BlurEffect Radius="10"></BlurEffect>
-            </Grid.Effect>-->
 
             <!--***********************************************************-->
             <!--****************  Grid Главное меню  **********************-->
             <!--***********************************************************-->
+
             <Grid Name="GridMainMenu" Grid.Column="0" Background="#FF2A2C2C">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="225"></RowDefinition>
@@ -104,9 +102,11 @@
                 <Label Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Name="LabelStateDownload" Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
                 <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Name="TextBoxJson" Style ="{StaticResource TextBoxMessage}" Visibility="Hidden"/>
             </Grid>
+
             <!--***********************************************************-->
             <!--*****************  Grid Форма Звука ***********************-->
             <!--***********************************************************-->
+
             <Grid Name="GridSound" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
@@ -226,7 +226,9 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
+            
             <!--Grid Форма Детализация игры -->
+            
             <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
@@ -256,7 +258,7 @@
                     </Button.Effect>
                 </Button>
                 <!--Таблица для детализации игр-->
-                <DataGrid x:Name="dataGridDetailGame" ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGridDetail}" CellStyle="{StaticResource DataGridCellsDetail}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" MouseDoubleClick="dataGridDetailGame_MouseDoubleClick" PreparingCellForEdit="dataGridDetailGame_PreparingCellForEdit" CellEditEnding="dataGridDetailGame_CellEditEnding">
+                <DataGrid x:Name="dataGridDetailGame"  ItemsSource="{Binding Source=MyList}" Style="{StaticResource dataGridDetail}" CellStyle="{StaticResource DataGridCellsDetail}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" MouseDoubleClick="dataGridDetailGame_MouseDoubleClick" PreparingCellForEdit="dataGridDetailGame_PreparingCellForEdit" CellEditEnding="dataGridDetailGame_CellEditEnding">
                     <DataGrid.GroupStyle>
                         <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
                             <GroupStyle.Panel>
@@ -268,11 +270,13 @@
                     </DataGrid.GroupStyle>
                     <DataGrid.Columns>
                         <!--Скрытый столбец c уникальным идентификатором игры -->
-                        <DataGridTextColumn Header="id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
+                        <DataGridTextColumn Header="id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}"   ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="250" HeaderStringFormat="" IsReadOnly="True" Visibility="Hidden"></DataGridTextColumn>
                         <!--Столбец c именем Игрока-->
-                        <DataGridTextColumn CanUserSort="False" Header="Игрок" Binding="{Binding GamerName, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="False" Visibility="Visible"></DataGridTextColumn>
+                        <DataGridTextColumn CanUserSort="False" Header="Игрок" Binding="{Binding GamerName, UpdateSourceTrigger=PropertyChanged}" EditingElementStyle="{StaticResource EditingTetxBlock}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="200" HeaderStringFormat="" IsReadOnly="False" Visibility="Visible">
+                      
+                        </DataGridTextColumn>
                         <!--Cтолбец Рейтинг-->
-                        <DataGridTextColumn Header="Рейтинг" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="170" HeaderStringFormat="" IsReadOnly="False">
+                        <DataGridTextColumn Header="Рейтинг" Binding="{Binding Rating, UpdateSourceTrigger=PropertyChanged}" EditingElementStyle="{StaticResource EditingTetxBlock}" ElementStyle="{StaticResource GridTetxBlock}"  MinWidth="170" HeaderStringFormat="" IsReadOnly="False">
                             <DataGridTextColumn.HeaderTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -282,15 +286,16 @@
                                 </DataTemplate>
                             </DataGridTextColumn.HeaderTemplate>
                         </DataGridTextColumn>
-                        <DataGridTextColumn CanUserSort="False" Header="Точность" Binding="{Binding Accuracy, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="false" CanUserResize="False"></DataGridTextColumn>
+                        <!--Cтолбец Точность-->
+                        <DataGridTextColumn CanUserSort="False" Header="Точность" Binding="{Binding Accuracy, UpdateSourceTrigger=PropertyChanged}" EditingElementStyle="{StaticResource EditingTetxBlock}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="false" CanUserResize="False"></DataGridTextColumn>
                         <!--Cтолбец Выстрелы-->
-                        <DataGridTextColumn CanUserSort="False" Header="Выстрелы" Binding="{Binding Shots, UpdateSourceTrigger=PropertyChanged}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="False" CanUserResize="False"></DataGridTextColumn>
+                        <DataGridTextColumn CanUserSort="False" Header="Выстрелы" Binding="{Binding Shots, UpdateSourceTrigger=PropertyChanged}" EditingElementStyle="{StaticResource EditingTetxBlock}" ElementStyle="{StaticResource GridTetxBlock}" MinWidth="170" IsReadOnly="False" CanUserResize="False"></DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
 
             <!--***********************************************************-->
-            <!--*****************  Затемняющая панель *********************-->
+            <!--***********  Затемняющая панель Главного Grid *************-->
             <!--***********************************************************-->
 
             <StackPanel Name="Shadow" Background="#FF2C2C2C" Grid.ColumnSpan="2" Opacity="0.9" Visibility="Visible">
@@ -300,43 +305,7 @@
             </StackPanel>
         </Grid>
 
-        <!--***********************************************************-->
-        <!--**********************  Grid ВК  **************************-->
-        <!--***********************************************************-->
-
-        <Grid Name="VKGrid" Grid.ColumnSpan="2" Visibility="Hidden">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="120"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="70"></RowDefinition>
-                <RowDefinition ></RowDefinition>
-                <RowDefinition Height="70"></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="190"></ColumnDefinition>
-                    <ColumnDefinition Width="30"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-
-                    <RowDefinition Height="30"></RowDefinition>
-                    <RowDefinition ></RowDefinition>
-                    <RowDefinition Height="70"></RowDefinition>
-                    <RowDefinition Height="30"></RowDefinition>
-                </Grid.RowDefinitions>
-                <WebBrowser x:Name="webBrowser" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,0" Navigated="WebBrowserNavigated" Visibility="Visible" OpacityMask="WhiteSmoke" Opacity="0" LoadCompleted="webBrowser_LoadCompleted"/>
-                <Button Grid.Row="2" Grid.Column="2" x:Name="CloseVK" Style="{StaticResource AccessoryButtonVK}" Content="Закрыть" Click="CloseVK_Click">
-                    <Button.Effect>
-                        <BlurEffect Radius="1.7"></BlurEffect>
-                    </Button.Effect>
-                </Button>
-            </Grid>
-        </Grid>
+        <Grid>
 
         <!--***********************************************************-->
         <!--***********  Детализация параметров игрока  ***************-->
@@ -406,93 +375,264 @@
         </Grid>
 
         <!--***********************************************************-->
-        <!--******************  Форма Сообщений ***********************-->
+        <!--**********************  Grid ВК  **************************-->
         <!--***********************************************************-->
 
-        <Grid Name="MessageGrid" Grid.ColumnSpan="2" Visibility="Hidden" >
+        <Grid Name="VKGrid" Grid.ColumnSpan="2" Visibility="Visible">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
                 <RowDefinition ></RowDefinition>
-                <RowDefinition Height="200"></RowDefinition>
+                <RowDefinition Height="70"></RowDefinition>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+            
+            <!--Форма Аутентификации-->
+            
+            <Grid Name="AuthenticationGrid" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition Width="190"></ColumnDefinition>
-                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="70"></RowDefinition>
                     <RowDefinition Height="30"></RowDefinition>
                     <RowDefinition Height="50"></RowDefinition>
-                    <RowDefinition ></RowDefinition>
-                    <RowDefinition Height="43"></RowDefinition>
+                    <RowDefinition Height="20"></RowDefinition>
                     <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="70"></RowDefinition>
+                    <RowDefinition Height="70"></RowDefinition>
+                    <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Style="{StaticResource LabelMain}">ПРОИЗОШЛА ОШИБКА</Label>
-                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="TextBoxError" Style ="{StaticResource TextBoxMessage}" Visibility="Visible"/>
-                <Button Grid.Row="3" Grid.Column="2" x:Name="CloseMessage" Style="{StaticResource AccessoryButton}" Content="Закрыть" Click="CloseMessage_Click">
+
+                <Label  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Style="{StaticResource LabelMain}" HorizontalAlignment="Center" Content="Аутентификация ВК"></Label>
+                <Label Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Телефон или e-mail</Label>
+                <TextBox Name="LoginVk" Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2"  Style="{StaticResource TextBoxBorderLine}" Height="20" Width="300" HorizontalAlignment="Left" Text=""></TextBox>
+                <Label Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Пароль</Label>
+                <PasswordBox Name="PasswordVK" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2"  Style="{StaticResource PasswordBoxBorderLine}" Width="300" Height="20" HorizontalAlignment="Left" Password="" PasswordChar="*" ></PasswordBox>
+                <Label Name="LabelStateConnect" Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="2"  Style="{StaticResource LabelSub}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,5,0,0" Visibility="Visible"></Label>
+
+              
+                <Button Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" x:Name="Connect" Style="{StaticResource AccessoryButtonVK}" Content="Вход" Click="Connect_Click" >
                     <Button.Effect>
                         <BlurEffect Radius="1.7"></BlurEffect>
                     </Button.Effect>
                 </Button>
+                    <Button Grid.Row="8" Grid.Column="4" Grid.ColumnSpan="2" x:Name="CloseVK" Style="{StaticResource AccessoryButton}" Content="Выход" Click="CloseVK_Click">
+                        <Button.Effect>
+                            <BlurEffect Radius="1.7"></BlurEffect>
+                        </Button.Effect>
+                    </Button>
+
+                </Grid>
+            
+            <!--Форма Формирования сообщения для группы-->
+                <Grid Name="CreatePostVK" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="Hidden">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                        <ColumnDefinition Width="200"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="50"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="100"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="120"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label  Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Style="{StaticResource LabelMain}" HorizontalAlignment="Center" Content="Публикация в ВК"></Label>
+                    <Label Grid.Row="3" Grid.Column="2"  Style="{StaticResource LabelSub}"  HorizontalAlignment="Left" Foreground="#FF2C2C2C">Текст сообщения:</Label>
+                    <TextBox Name="TextBoxVK" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"   BorderThickness="2,2,0,0" Style ="{StaticResource TextBoxMessage}" Visibility="Visible" IsReadOnly="False"/>
+                    <CheckBox Name="DocVk" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource CheckBoxVk}">Добавить статистику игры вложением</CheckBox>
+                    <CheckBox Name="ScreenVK" Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource CheckBoxVk}">Добавить скриншот программы</CheckBox>
+                    <ComboBox  SelectedValue="{Binding ID}" Name="ComboBoxVK" Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2" Width="400" MaxDropDownHeight="100" Style="{StaticResource BoxVk}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock  Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
+                                    <TextBlock Width="0" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" Visibility="Hidden"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <!--<ComboBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ComboBoxItem}">
+                                <Setter Property="Background" Value="WhiteSmoke" />
+                            </Style>
+                        </ComboBox.ItemContainerStyle>-->
+                        <ComboBox.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="WhiteSmoke" />
+                        </ComboBox.Resources>
+                    </ComboBox>
+                    <Button Grid.Row="9" Grid.Column="2"  x:Name="CloseSend" Style="{StaticResource AccessoryButtonVK}" Content="Отправить" Click="SendVK_Click" >
+                        <Button.Effect>
+                            <BlurEffect Radius="1.7"></BlurEffect>
+                        </Button.Effect>
+                    </Button>
+                    <Button Grid.Row="9" Grid.Column="3"  x:Name="SendVK" Style="{StaticResource AccessoryButton}" Content="Выход" Click="CloseSend_Click">
+                        <Button.Effect>
+                            <BlurEffect Radius="1.7"></BlurEffect>
+                        </Button.Effect>
+                    </Button>
+             
+                </Grid>
+
             </Grid>
 
-        </Grid>
-        
         <!--***********************************************************-->
-        <!--**********************  АНИМАЦИЯ **************************-->
+        <!--******************  Форма Сообщений ***********************-->
         <!--***********************************************************-->
 
-        <Grid Name="AnimationGrid" Grid.ColumnSpan="2" Visibility="Visible">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition Width="40"></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition ></RowDefinition>
-                <RowDefinition Height="40"></RowDefinition>
-                <RowDefinition ></RowDefinition>
-            </Grid.RowDefinitions>
-            <Canvas Grid.Column="1" Grid.Row="1" Width="40" Height="40" >
-                <Path Stroke="WhiteSmoke" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
-                    <Path.Data>
-                        <PathGeometry>
-                            <PathFigure StartPoint="20,0">
-                                <ArcSegment Point="0,20" Size="20,20"></ArcSegment>
-                                <ArcSegment Point="20,40" Size="20,20"></ArcSegment>
-                                <ArcSegment Point="40,20" Size="20,20"></ArcSegment>
-                                <ArcSegment Point="35,7" Size="20,20"></ArcSegment>
-                            </PathFigure>
-                        </PathGeometry>
-                    </Path.Data>
-                    <Path.RenderTransform>
-                        <RotateTransform x:Name="AnimatedRotateTransform" Angle="0" CenterX="20" CenterY="20" />
-                    </Path.RenderTransform>
-                    <Path.Triggers>
-                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                            <EventTrigger.Actions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="AnimatedRotateTransform"
+            <Grid Name="MessageGrid" Grid.ColumnSpan="2" Visibility="Hidden" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="200"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="200"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1" Grid.Column="1" Background="WhiteSmoke">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="190"></ColumnDefinition>
+                        <ColumnDefinition Width="30"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition ></RowDefinition>
+                        <RowDefinition Height="43"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Style="{StaticResource LabelMain}">ПРОИЗОШЛА ОШИБКА</Label>
+                    <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="TextBoxError" Style ="{StaticResource TextBoxMessage}" Text="{Binding ErrorMessage, UpdateSourceTrigger=PropertyChanged}" Visibility="Visible"/>
+                    <Button Grid.Row="3" Grid.Column="2" x:Name="CloseMessage" Style="{StaticResource AccessoryButton}" Content="Закрыть" Click="CloseMessage_Click">
+                        <Button.Effect>
+                            <BlurEffect Radius="1.7"></BlurEffect>
+                        </Button.Effect>
+                    </Button>
+                </Grid>
+
+            </Grid>
+
+            <!--***********************************************************-->
+            <!--*******  Затемняющая панель Вспомогательныйх окон *********-->
+            <!--***********************************************************-->
+
+            <StackPanel Name="ShadowSub" Background="#FF2C2C2C"  Opacity="0.9" Visibility="Hidden">
+                <StackPanel.Effect>
+                    <BlurEffect Radius="10"></BlurEffect>
+                </StackPanel.Effect>
+            </StackPanel>
+
+            <!--***********************************************************-->
+            <!--**********************  АНИМАЦИЯ **************************-->
+            <!--***********************************************************-->
+
+            <Grid Name="AnimationGrid" Grid.ColumnSpan="2" Visibility="Visible">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="40"></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition Height="40"></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Canvas Grid.Column="1" Grid.Row="1" Width="40" Height="40" >
+                    <Path Stroke="WhiteSmoke" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Canvas.Top="0.166">
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathFigure StartPoint="20,0">
+                                    <ArcSegment Point="0,20" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="20,40" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="40,20" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="35,6.8" Size="20,20"></ArcSegment>
+                                </PathFigure>
+                            </PathGeometry>
+                        </Path.Data>
+                        <Path.RenderTransform>
+                            <RotateTransform x:Name="AnimatedRotateTransform" Angle="0" CenterX="20" CenterY="20" />
+                        </Path.RenderTransform>
+                        <Path.Triggers>
+                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="AnimatedRotateTransform"
                                                          Storyboard.TargetProperty="Angle" 
                                                          To="-360" Duration="0:0:2" RepeatBehavior="Forever" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger.Actions>
-                        </EventTrigger>
-                    </Path.Triggers>
-                    <Path.Effect>
-                        <BlurEffect Radius="3"></BlurEffect>
-                    </Path.Effect>
-                </Path>
-            </Canvas>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Path.Triggers>
+                        <Path.Effect>
+                            <BlurEffect Radius="3"></BlurEffect>
+                        </Path.Effect>
+                    </Path>
+                </Canvas>
+                <!--<Canvas Grid.Column="1" Grid.Row="1" Width="40" Height="40" >
+                    <Path Stroke="Red" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Canvas.Top="0.166">
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathFigure StartPoint="20,0">
+                                    <ArcSegment Point="0,20" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="20,40" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="40,20" Size="20,20"></ArcSegment>
+                                    <ArcSegment Point="0,20" Size="20,20"></ArcSegment>
+                                </PathFigure>
+                            </PathGeometry>
+                        </Path.Data>
+                        <Path.RenderTransform>
+                            <RotateTransform x:Name="AnimatedRotateTransform1" Angle="0" CenterX="20" CenterY="20" />
+                        </Path.RenderTransform>
+                        <Path.Triggers>
+                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                <EventTrigger.Actions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="AnimatedRotate1ransform"
+                                                         Storyboard.TargetProperty="Angle" 
+                                                         To="-360" Duration="0:0:2" RepeatBehavior="Forever" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger.Actions>
+                            </EventTrigger>
+                        </Path.Triggers>
+                        <Path.Effect>
+                            <BlurEffect Radius="3"></BlurEffect>
+                        </Path.Effect>
+                    </Path>
+                </Canvas>-->
+            </Grid>
+
         </Grid>
     </Grid>
 </Window>

@@ -16,7 +16,7 @@ namespace TestLaserwar
         /// </summary>
         /// <param name="ID"> Уникальный монер детилизируемой игры</param>
         /// <returns>Имя файла</returns>
-        public string CreatePDF(int ID)
+        public string CreatePDF(int ID, bool IsOpen)
         {          
             SQLite SQL = new SQLite();
             DataTable SQLansw = new DataTable();
@@ -457,7 +457,7 @@ namespace TestLaserwar
             doc.Add(table);
             doc.Close();
             //Открываем сформированный файл      
-            Process.Start(FileName);
+            if(IsOpen)Process.Start(FileName);
             return FileName;
         }
 

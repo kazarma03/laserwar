@@ -28,3 +28,10 @@ C:\test\TestLaserwar\TestLaserwar\bin\Debug\xNet.dll
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\OtherElement.baml
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\ScrollBar.baml
 C:\test\TestLaserwar\TestLaserwar\obj\Debug\Grid.baml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\AngleSharp.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\JetBrains.Annotations.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\VkNet.UWP.dll
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\AngleSharp.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\JetBrains.Annotations.xml
+C:\test\TestLaserwar\TestLaserwar\bin\Debug\VkNet.UWP.xml
