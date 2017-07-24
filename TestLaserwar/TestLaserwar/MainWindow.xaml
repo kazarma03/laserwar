@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:TestLaserwar"
         mc:Ignorable="d"
         Title="TestLaserwar" Height="750
-        " Width="1050" MinHeight="750" MinWidth="1050">
+        " Width="1050" MinHeight="750" MinWidth="1050"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,24 +15,6 @@
                 <ResourceDictionary Source="Grid.xaml"/>
                 <ResourceDictionary Source="OtherElement.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <PathGeometry x:Key="path">
-                <PathFigure IsClosed="True">
-                    <ArcSegment Point="1,0"
-            Size="50,25"
-            IsLargeArc="True"/>
-                </PathFigure>
-            </PathGeometry>
-            <Storyboard x:Key="storyboard"
-        Storyboard.TargetName="rect">
-                <DoubleAnimationUsingPath
-      Storyboard.TargetProperty="(Canvas.Left)"
-      PathGeometry="{StaticResource path}"
-      Source="X" Duration="0:0:5"/>
-                <DoubleAnimationUsingPath
-      Storyboard.TargetProperty="(Canvas.Top)"
-      PathGeometry="{StaticResource path}"
-      Source="Y" Duration="0:0:5"/>
-            </Storyboard>
         </ResourceDictionary>
         
     </Window.Resources>
@@ -74,7 +57,7 @@
             <!--***************  Grid Форма Загрузки  *********************-->
             <!--***********************************************************-->
 
-            <Grid Name="GridDownload" Grid.Column="2"  Visibility="Hidden" Background="WhiteSmoke">
+            <Grid Name="GridDownload" Grid.Column="2"  Visibility="{Binding dkey, UpdateSourceTrigger=PropertyChanged}" Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition MinWidth="350"></ColumnDefinition>
@@ -107,7 +90,7 @@
             <!--*****************  Grid Форма Звука ***********************-->
             <!--***********************************************************-->
 
-            <Grid Name="GridSound" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+            <Grid Name="GridSound" Grid.Column="2" Visibility="{Binding skey, UpdateSourceTrigger=PropertyChanged}"  Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -199,7 +182,7 @@
             <!--******************  Grid Форма Игра ***********************-->
             <!--***********************************************************-->
 
-            <Grid Name="GridGames" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+            <Grid Name="GridGames" Grid.Column="2" Visibility="{Binding gkey, UpdateSourceTrigger=PropertyChanged}"  Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -228,8 +211,8 @@
             </Grid>
             
             <!--Grid Форма Детализация игры -->
-            
-            <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="Hidden"  Background="WhiteSmoke">
+
+            <Grid Name="GridGamesDetail" Grid.Column="2" Visibility="{Binding gdkey, UpdateSourceTrigger=PropertyChanged}"  Background="WhiteSmoke">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -298,7 +281,7 @@
             <!--***********  Затемняющая панель Главного Grid *************-->
             <!--***********************************************************-->
 
-            <StackPanel Name="Shadow" Background="#FF2C2C2C" Grid.ColumnSpan="2" Opacity="0.9" Visibility="Visible">
+            <StackPanel Name="Shadow" Background="#FF2C2C2C" Grid.ColumnSpan="2" Opacity="0.9" Visibility="{Binding Skey, UpdateSourceTrigger=PropertyChanged}">
                 <StackPanel.Effect>
                     <BlurEffect Radius="10"></BlurEffect>
                 </StackPanel.Effect>
@@ -311,7 +294,7 @@
         <!--***********  Детализация параметров игрока  ***************-->
         <!--***********************************************************-->
 
-        <Grid Name="GamerDetailGrid" Grid.ColumnSpan="2" Visibility="Hidden">
+            <Grid Name="GamerDetailGrid" Grid.ColumnSpan="2" Visibility="{Binding gdgkey, UpdateSourceTrigger=PropertyChanged}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -378,7 +361,7 @@
         <!--**********************  Grid ВК  **************************-->
         <!--***********************************************************-->
 
-        <Grid Name="VKGrid" Grid.ColumnSpan="2" Visibility="Visible">
+            <Grid Name="VKGrid" Grid.ColumnSpan="2" Visibility="{Binding VKkey, UpdateSourceTrigger=PropertyChanged}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -391,8 +374,8 @@
             </Grid.RowDefinitions>
             
             <!--Форма Аутентификации-->
-            
-            <Grid Name="AuthenticationGrid" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="Hidden">
+
+                <Grid Name="AuthenticationGrid" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="{Binding VKAkey, UpdateSourceTrigger=PropertyChanged}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -438,7 +421,7 @@
                 </Grid>
             
             <!--Форма Формирования сообщения для группы-->
-                <Grid Name="CreatePostVK" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="Hidden">
+                <Grid Name="CreatePostVK" Grid.Row="1" Grid.Column="1" Background="WhiteSmoke" Visibility="{Binding VKSkey, UpdateSourceTrigger=PropertyChanged}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
@@ -499,11 +482,22 @@
 
             </Grid>
 
-        <!--***********************************************************-->
-        <!--******************  Форма Сообщений ***********************-->
-        <!--***********************************************************-->
+      
+            <!--***********************************************************-->
+            <!--*******  Затемняющая панель Вспомогательныйх окон *********-->
+            <!--***********************************************************-->
 
-            <Grid Name="MessageGrid" Grid.ColumnSpan="2" Visibility="Hidden" >
+            <StackPanel Name="ShadowSub" Background="#FF2C2C2C"  Opacity="0.9" Visibility="{Binding SSkey, UpdateSourceTrigger=PropertyChanged}">
+                <StackPanel.Effect>
+                    <BlurEffect Radius="10"></BlurEffect>
+                </StackPanel.Effect>
+            </StackPanel>
+
+            <!--***********************************************************-->
+            <!--******************  Форма Сообщений ***********************-->
+            <!--***********************************************************-->
+
+            <Grid Name="MessageGrid" Grid.ColumnSpan="2" Visibility="{Binding Mkey, UpdateSourceTrigger=PropertyChanged}" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
@@ -540,20 +534,10 @@
             </Grid>
 
             <!--***********************************************************-->
-            <!--*******  Затемняющая панель Вспомогательныйх окон *********-->
-            <!--***********************************************************-->
-
-            <StackPanel Name="ShadowSub" Background="#FF2C2C2C"  Opacity="0.9" Visibility="Hidden">
-                <StackPanel.Effect>
-                    <BlurEffect Radius="10"></BlurEffect>
-                </StackPanel.Effect>
-            </StackPanel>
-
-            <!--***********************************************************-->
             <!--**********************  АНИМАЦИЯ **************************-->
             <!--***********************************************************-->
 
-            <Grid Name="AnimationGrid" Grid.ColumnSpan="2" Visibility="Visible">
+            <Grid Name="AnimationGrid" Grid.ColumnSpan="2" Visibility="{Binding Akey, UpdateSourceTrigger=PropertyChanged}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition Width="40"></ColumnDefinition>

@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/show.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("redempty-star_icon-icons.com_68554.ico")]
 
 

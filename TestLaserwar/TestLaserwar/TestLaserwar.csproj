@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>REDempty-star_icon-icons.com_68554.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AngleSharp, Version=0.9.9.0, Culture=neutral, PublicKeyToken=e83494dcdc6d31ea, processorArchitecture=MSIL">
       <HintPath>..\packages\AngleSharp.0.9.9\lib\net45\AngleSharp.dll</HintPath>
@@ -115,8 +118,9 @@
     <Compile Include="class\buttons.cs" />
     <Compile Include="class\DetailGameTable.cs" />
     <Compile Include="class\Error.cs" />
-    <Compile Include="class\GsmeTable.cs" />
+    <Compile Include="class\GameTable.cs" />
     <Compile Include="class\ImmediateLocation.cs" />
+    <Compile Include="class\Interface.cs" />
     <Compile Include="class\LocationFromIP.cs" />
     <Compile Include="class\PDF.cs" />
     <Compile Include="class\ScreenShotElement.cs" />
@@ -195,7 +199,12 @@
   <ItemGroup>
     <Resource Include="resources\show.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="empty-star_icon-icons.com_68554.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="REDempty-star_icon-icons.com_68554.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net451\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

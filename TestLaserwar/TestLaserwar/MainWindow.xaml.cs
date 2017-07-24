@@ -37,12 +37,16 @@ namespace TestLaserwar
 
         Error Err = new Error();
 
+        Interface VisabilityInterface = new Interface();
+        Visibility vi = Visibility.Visible;
+        Visibility hi = Visibility.Hidden;
+
         /// <summary>
         /// Загрузка главного окна
         /// </summary>
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false,false,false, false, false, false, false, false, false, false);
+            RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
             
             dataGridSounds.ItemsSource = bindSoundTabel;
             dataGridGame.ItemsSource =bindGameTabel;
@@ -60,6 +64,19 @@ namespace TestLaserwar
             but.ClickButtonDownLoad = true;
             but.ClickButtonSound = false;
             but.ClickButtonGame = false;
+
+            GridDownload.DataContext = VisabilityInterface;
+            GridSound.DataContext = VisabilityInterface;
+            GridGames.DataContext = VisabilityInterface;
+            GridGamesDetail.DataContext = VisabilityInterface;
+            GamerDetailGrid.DataContext = VisabilityInterface;
+            VKGrid.DataContext = VisabilityInterface;
+            AuthenticationGrid.DataContext = VisabilityInterface;
+            CreatePostVK.DataContext = VisabilityInterface;
+            Shadow.DataContext = VisabilityInterface;
+            ShadowSub.DataContext = VisabilityInterface;
+            AnimationGrid.DataContext = VisabilityInterface;
+            MessageGrid.DataContext = VisabilityInterface;
         }
 
         /// <summary>
@@ -72,6 +89,8 @@ namespace TestLaserwar
         /// </summary>
         buttons but = new buttons();
 
+        int PrevMainFormKey =1;
+
         /// <summary>
         /// Обновление форм при переходах
         /// </summary>
@@ -83,146 +102,85 @@ namespace TestLaserwar
         /// <param name="VKkey">Форма ВК</param>
         /// <param name="VKAkey">Форма Аутентификации ВК на форме ВК</param>
         /// <param name="VKSkey">Форма отправки Поста в ВК на формме ВК</param>
-        /// <param name="Skey">Затемнение главнйх форм</param>
+        /// <param name="Skey">Затемнение главных форм</param>
         /// <param name="SSkey">Затемнение вспомогательных форм</param>
         /// <param name="Akey">Анимация</param>
         /// <param name="Mkey">Сообщение об ошибке</param>
-        private void RefMainMenu(bool dkey, bool skey, bool gkey, bool gdkey, bool gdgkey, bool VKkey, bool VKAkey, bool VKSkey, bool Skey, bool SSkey, bool Akey, bool Mkey )
+        private void RefMainMenu(Visibility dkey, Visibility skey, Visibility gkey, Visibility gdkey, Visibility gdgkey, Visibility VKkey, Visibility VKAkey, Visibility VKSkey, Visibility Skey, Visibility SSkey, Visibility Akey, Visibility Mkey )
         {
-            if (dkey)
-            {
-                GridDownload.Visibility = Visibility.Visible;
-                GridGamesDetail.Visibility = Visibility.Hidden;              
-                but.ClickButtonDownLoad = true;
-            }
-            else
-            {
-                GridDownload.Visibility = Visibility.Hidden;           
-                but.ClickButtonDownLoad = false;
-            }
-            if (skey)
-            {
-                GridSound.Visibility = Visibility.Visible;  
-                but.ClickButtonSound = true;
-            }
-            else
-            {
-                GridSound.Visibility = Visibility.Hidden;             
-                but.ClickButtonSound = false;
-            }
-            if (gkey)
-            {
-                GridGames.Visibility = Visibility.Visible;            
-                but.ClickButtonGame = true;
-            }
-            else
-            {
-                GridGames.Visibility = Visibility.Hidden;            
-                but.ClickButtonGame = false;
-            }
-            if (gdkey)
-            {
-                GridGamesDetail.Visibility = Visibility.Visible;
-                but.ClickButtonGame = true;
-            }
-            else
-            {
-                GridGamesDetail.Visibility = Visibility.Hidden;
-            }
-            if (gdgkey)
-            {
-                
-                GamerDetailGrid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                GamerDetailGrid.Visibility = Visibility.Hidden;
-            }
-            if (VKkey)
-            {
-                VKGrid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                VKGrid.Visibility = Visibility.Hidden;
-            }
-            if (VKAkey)
-            {                
-               
-                AuthenticationGrid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                AuthenticationGrid.Visibility = Visibility.Hidden;
-            }
+            VisabilityInterface.dkey = dkey;
+            if(dkey ==Visibility)but.ClickButtonDownLoad = true;
+            else but.ClickButtonDownLoad = false;
 
-            if (VKSkey)
-            {
-                CreatePostVK.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                CreatePostVK.Visibility = Visibility.Hidden;
-            }
+            VisabilityInterface.skey = skey;
+            if (skey == Visibility) but.ClickButtonSound = true;
+            else but.ClickButtonSound = false;
+            
+            VisabilityInterface.gkey = gkey;
+            if (gkey == Visibility) but.ClickButtonGame = true;
+            else but.ClickButtonGame = false;
 
-            if (Skey)
-            {
-                Shadow.Visibility = Visibility.Visible;
+            VisabilityInterface.gdkey = gdkey;
+            if (gdkey == Visibility) but.ClickButtonGame = true;
 
-                BlurEffect objBlur = new BlurEffect();
-                objBlur.Radius = 7;
-                MainGrid.Effect = objBlur;
-            }
-            else
-            {
-                Shadow.Visibility = Visibility.Hidden;
-                MainGrid.Effect = null;
-            }
-            if (SSkey)
-            {
-                ShadowSub.Visibility = Visibility.Visible;
+            VisabilityInterface.gdgkey = gdgkey;
 
-                BlurEffect objBlur = new BlurEffect();
-                objBlur.Radius = 7;
-                MainGrid.Effect = objBlur;
-            }
-            else
-            {
-                ShadowSub.Visibility = Visibility.Hidden;
-                MainGrid.Effect = null;
-            }
+            VisabilityInterface.VKkey = VKkey;
+  
+            VisabilityInterface.VKAkey = VKAkey;
 
-            if (Akey)
-            {
-                AnimationGrid.Visibility = Visibility.Visible;
-            }
+            VisabilityInterface.VKSkey = VKSkey;
+
+            VisabilityInterface.Skey = Skey;
+            if (Skey == Visibility)
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    BlurEffect objBlur = new BlurEffect();
+                    objBlur.Radius = 7;
+                    MainGrid.Effect = objBlur;
+                });
+            else         
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    MainGrid.Effect = null;
+                });
+
+            VisabilityInterface.SSkey = SSkey;
+            if (SSkey == Visibility)
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    BlurEffect objBlur = new BlurEffect();
+                    objBlur.Radius = 7;
+                    MainGrid.Effect = objBlur;
+                });
             else
-            {
-                AnimationGrid.Visibility = Visibility.Hidden;
-            }                 
-            if (Mkey)
-            {
-                MessageGrid.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                MessageGrid.Visibility = Visibility.Hidden;
-            }
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
+                {
+                    MainGrid.Effect = null;
+                });
+
+            VisabilityInterface.Akey = Akey;
+
+
+            VisabilityInterface.Mkey = Mkey;        
         }
 
         private void download_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false,false, false, false, false, false, false, false, false, false);
+            PrevMainFormKey = 1;
+            RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
         }
 
         private void sounds_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, true, false,false, false, false, false, false, false, false, false, false);
+            PrevMainFormKey = 2;
+            RefMainMenu(hi, vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
         }
 
         private void games_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, true,false, false, false, false, false, false, false, false, false);
+            PrevMainFormKey = 3;
+            RefMainMenu(hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
             GetGameData();
         }
 
@@ -413,42 +371,37 @@ namespace TestLaserwar
                     {
                         TextBoxJson.Visibility = Visibility.Visible;
                         LabelStateDownload.Content = "Файл успешно загружен";
-                        but.OnOfButtonSound = true;
-                        but.OnOfButtonGame = true;
+                        LabelStateDownload.Visibility = Visibility.Visible;
                     });
+                    but.OnOfButtonSound = true;
+                    but.OnOfButtonGame = true;
+                    RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);                   
                 }
                 else
                 {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                    {
-                        LabelStateDownload.Content = "Файл не содержит необходимых данных";
-                    });
+                    // LabelStateDownload.Content = "Файл не содержит необходимых данных";
+                    //Отображаем сообщение об ошибке
+                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                    RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, vi, hi, hi, vi);
+                    Err.ErrorMessage = "Файл не содержит необходимых данных.";
                 }
             }
             else
-            {
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                {
-                    LabelStateDownload.Content = "Файл не найден";
-                });
-            }
-            //Отображаем статус загрузки данных
-            this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-            {
-                LabelStateDownload.Visibility = Visibility.Visible;
-              //  but.OnOfDownloadJsonButtton = true;
-                RefMainMenu(true, false, false, false, false, false, false, false, false, false, false, false);
-            });
-            
+            {             
+                //LabelStateDownload.Content = "Файл не найден";
+                //Отображаем сообщение об ошибке
+                /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, vi, hi, hi, vi);
+                Err.ErrorMessage = "Файл не найден. Проверьте корректность URL, начичие выхода в интернет и повторите попытку.";
+            }            
         }
-
 
         /// <summary>
         /// Загрузка объекта JSON
         /// </summary>
         private void buttonDownload_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false, false, false, false, true, true, true, false, true, false);
+            RefMainMenu(vi, hi, hi, hi, hi, hi, vi, vi, vi, hi, vi, hi);
            // but.OnOfDownloadJsonButtton = false;
             TextBoxJson.Visibility = Visibility.Hidden;
             LabelStateDownload.Visibility = Visibility.Hidden;
@@ -545,13 +498,15 @@ namespace TestLaserwar
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Reset();
+                string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
+                string FilePath = bindSoundTabel[ind].URL;
+
                 //создание и перегрузка события завершения загрузки асинхронного загрузчика
-                client.DownloadFileCompleted += new AsyncCompletedEventHandler((sender, e) => Completed(sender, e, ind));
+                client.DownloadFileCompleted += new AsyncCompletedEventHandler((sender, e) => Completed(sender, e, ind, FileName));
                 //создание и перегрузка события изменения состояния загрузки асинхронного загрузчика
                 client.DownloadProgressChanged += new DownloadProgressChangedEventHandler((sender, e) => ProgressChanged(sender, e, ind, sw));
 
-                string FileName = bindSoundTabel[ind].URL.Substring(bindSoundTabel[ind].URL.LastIndexOf(@"/") + 1);
-                string FilePath = bindSoundTabel[ind].URL;
+              
                 //string FilePath = "http://ru.download.nvidia.com/Windows/384.76/384.76-desktop-win10-64bit-international-whql.exe";
                 //string FilePath = "http://best-muzon.cc/dl/CZisIgYr9nmLLV9RcFvBRA/1500238531/songs12/2017/01/luis-fonsi-feat.-daddy-yankee-despacito-(best-muzon.cc).mp3";
                 // Запуск Stopwatch для дальнейшего расчета скорости загрузки файла
@@ -559,11 +514,21 @@ namespace TestLaserwar
                 try
                 {
                     // начинаем загрузку файла асинхронно
-                    client.DownloadFileAsync(new Uri(FilePath), FileName);               
+                    client.DownloadFileAsync(new Uri(FilePath), FileName);
+                    //client.DownloadFileAsync(new Uri(" "), FileName);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+
+                    // MessageBox.Show(ex.Message);
+                    //Отображаем сообщение об ошибке
+                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                    RefMainMenu(hi, vi, hi, hi, hi, hi, hi, hi, vi, hi, hi, vi);
+       
+                    Err.ErrorMessage = "Возникли ошибки при загрузке файла. Проверьте корректность URL, начичие выхода в интернет и повторите попытку.";
+                    bindSoundTabel[ind].OnOfDowlLoad = true;
+                    bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+                    bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;                
                 }
             }
         }
@@ -601,8 +566,9 @@ namespace TestLaserwar
         /// Событие завершения работы асинхронного загрузчика файлов
         /// </summary>
         /// <param name="ind">Индекс текущего обрабатываемого элемента</param>
-        private void Completed(object sender, AsyncCompletedEventArgs e, int ind)
+        private void Completed(object sender, AsyncCompletedEventArgs e, int ind, string FileName)
         {
+            string[] findFiles = new string[1];
             if (e.Cancelled == true)
             {
                 //tесли было принудительное завершение загрузки файла
@@ -610,20 +576,57 @@ namespace TestLaserwar
             }
             else
             {
-                //отображаем лейбл "Файл загружен"
-                bindSoundTabel[ind].OnOfStateProgress = Visibility.Visible;
-                //Делаю кнопку загрузки неактивной
-                bindSoundTabel[ind].OnOfDowlLoad = false;
-                //Меняем иконку загрузки на неактивную
-                bindSoundTabel[ind].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
-                //Скрываем прогрессор загрузки
-                bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
-                //Скрываем проценты загрузки
-                bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
-                //Делаем кнопку проигрывания активной
-                bindSoundTabel[ind].OnOfPlay = true;
-                //Меняем иконку проигрывания на активную
-                bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\play.png";
+                // Находим загруженный файл
+                findFiles = System.IO.Directory.GetFiles(Directory.GetCurrentDirectory(), FileName);
+                if (findFiles.LongLength == 0)
+                {
+
+                    // MessageBox.Show(ex.Message);
+                    //Отображаем сообщение об ошибке
+                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                    RefMainMenu(hi, vi, hi, hi, hi, hi, hi, hi, vi, hi, hi, vi);
+                    Err.ErrorMessage = "Возникли ошибки при загрузке файла.";
+                    bindSoundTabel[ind].OnOfDowlLoad = true;
+                    bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+                    bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
+                }
+                else
+                if (findFiles.LongLength != 0)
+                {
+                    //Определяем размер скачанного файла
+                    long length = new System.IO.FileInfo(findFiles[0]).Length;
+                    if (length == 0)
+                    {
+
+                        // MessageBox.Show(ex.Message);
+                        //Отображаем сообщение об ошибке
+                        /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                        RefMainMenu(hi, vi, hi, hi, hi, hi, hi, hi, vi, hi, hi, vi);
+                        Err.ErrorMessage = "Возникли ошибки при загрузке файла. Проверьте начичие выхода в интернет и повторите попытку.";
+                        bindSoundTabel[ind].OnOfDowlLoad = true;
+                        bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+                        bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
+                        // удаляем скачанный файл если его размер 0
+                        File.Delete(findFiles[0]);
+                    }
+                    else
+                    {
+                        //отображаем лейбл "Файл загружен"
+                        bindSoundTabel[ind].OnOfStateProgress = Visibility.Visible;
+                        //Делаю кнопку загрузки неактивной
+                        bindSoundTabel[ind].OnOfDowlLoad = false;
+                        //Меняем иконку загрузки на неактивную
+                        bindSoundTabel[ind].DownloadPathIcon = @"~\..\resources\downloaded_sound.png";
+                        //Скрываем прогрессор загрузки
+                        bindSoundTabel[ind].OnOfDownloadProgress = Visibility.Hidden;
+                        //Скрываем проценты загрузки
+                        bindSoundTabel[ind].OnOfPercent = Visibility.Hidden;
+                        //Делаем кнопку проигрывания активной
+                        bindSoundTabel[ind].OnOfPlay = true;
+                        //Меняем иконку проигрывания на активную
+                        bindSoundTabel[ind].PlayPathIcon = @"~\..\resources\play.png";
+                    }
+                }              
             }
         }
 
@@ -756,10 +759,11 @@ namespace TestLaserwar
         {
             if (dataGridGame.CurrentItem != null)
             {
+                PrevMainFormKey = 4;
                 //получаем уникальный идентификатор игры
                 int id_game = bindGameTabel[dataGridGame.Items.IndexOf(dataGridGame.CurrentItem)].id_Game;
                 int count = bindGameTabel.Count;
-                RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+                RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
                 ID = id_game;
                 FillGameDetail(id_game);
             }
@@ -821,7 +825,7 @@ namespace TestLaserwar
         /// </summary>
         private void Return_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, true, false, false, false, false, false, false, false, false, false);
+            RefMainMenu(hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
 
             GetGameData();
         }
@@ -989,7 +993,7 @@ namespace TestLaserwar
 
         private void DisAgree_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+            RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
             FillGameDetail(ID);
         }
 
@@ -1015,7 +1019,7 @@ namespace TestLaserwar
        
             SQL.SqlUpdateSinglefield(tabelEvents, "shots", TextBoxGamerShots.Text, "id ='" + Prep_id + "'");
 
-            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+            RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
             FillGameDetail(ID);
 
         }
@@ -1043,7 +1047,7 @@ namespace TestLaserwar
                 TextBoxGamerRating.Text = GamerProperty.Rows[0][2].ToString();
                 TextBoxGamerAccuracy.Text = Convert.ToString(Convert.ToDouble(GamerProperty.Rows[0][3])*100) +" %";
                 TextBoxGamerShots.Text = GamerProperty.Rows[0][4].ToString();
-                RefMainMenu(false, false, false, true, true, false, false, false, true, false, false, false);
+                RefMainMenu(hi, hi, hi, vi, vi, hi, hi, hi, vi, hi, hi, hi);
             }
         }
 
@@ -1070,7 +1074,11 @@ namespace TestLaserwar
 
         private void CloseMessage_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(true, false, false, false, false, false, false, false, false, false, false, false);
+            if (PrevMainFormKey == 1) RefMainMenu(vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
+            if (PrevMainFormKey == 2) RefMainMenu(hi, vi, hi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
+            if (PrevMainFormKey == 3) RefMainMenu(hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi, hi);
+            if (PrevMainFormKey == 4) RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
+            if (PrevMainFormKey == 5) RefMainMenu(hi, hi, hi, vi, hi, vi, vi, hi, vi, hi, hi, hi);
         }
 
 
@@ -1095,19 +1103,20 @@ namespace TestLaserwar
         /// </summary>
         private void PublishVK_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
-
+            PrevMainFormKey = 5;
+            RefMainMenu(hi, hi, hi, vi, hi, vi, vi, hi, vi, hi, hi, hi);
         }
 
         /// <summary>
         /// Клик на вход в ВК
         /// </summary>
         private void Connect_Click(object sender, RoutedEventArgs e)
-        {
-            RefMainMenu(false, false, false, false, false, true, true, false, true, true, true, false);
+        {            
+            RefMainMenu(hi, hi, hi, vi, hi, vi, vi, hi, vi, vi, vi, hi);
             ComboBoxVK.ItemsSource = Groups;
     
             Thread VK_connector = new Thread(FormFillSenderVK);
+            VK_connector.Priority = ThreadPriority.AboveNormal;
             VK_connector.Start();
         }
 
@@ -1131,18 +1140,16 @@ namespace TestLaserwar
                 {
                     //Отображаем форму постинга
                     ComboBoxVK.SelectedIndex = 0;
-                    RefMainMenu(false, false, false, false, false, true, false, true, true, false, false, false);
                 });
+                RefMainMenu(hi, hi, hi, vi, hi, vi, hi, vi, vi, hi, hi, hi);
+
             }
             else
-            {
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                {
-                    //Отображаем сообщение об ошибке
-                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
-                    RefMainMenu(false, false, false, false, false, false, false, false, true, false, false, true);
-                    Err.ErrorMessage = "Не удалось установить соединение. Проверьте правильности имени пользователя и пароля.";
-                });
+            {            
+                //Отображаем сообщение об ошибке
+                /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                RefMainMenu(hi, hi, hi, vi, hi, vi, vi, hi, vi, vi, hi, vi);
+                Err.ErrorMessage = "Не удалось установить соединение. Проверьте правильности имени пользователя и пароля.";            
             }
         }
 
@@ -1151,7 +1158,8 @@ namespace TestLaserwar
         /// </summary>
         private void CloseVK_Click(object sender, RoutedEventArgs e)
         {
-            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+            PrevMainFormKey = 4;
+            RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
         }
 
         /// <summary>
@@ -1200,6 +1208,7 @@ namespace TestLaserwar
             bool keyScreen = false;
             VKGroup Group = new VKGroup(0,"");
             string Mes = "";
+            int ErrorKey = 0;
 
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
@@ -1229,6 +1238,7 @@ namespace TestLaserwar
                 }
                 catch (Exception ex)
                 {
+                    ErrorKey = 1;
                 }
             }  
             //Если необходимо добавить скриншот в пост
@@ -1241,34 +1251,36 @@ namespace TestLaserwar
                 });
 
                 Thread.Sleep(1000);
-
-                var getAlbums = api.Photo.GetAlbums(new PhotoGetAlbumsParams{});
-                long AlbumId = 0;
-                bool albumFind = false;
-                //Ищем альбом у пользователя
-                for (int i = 0; i < getAlbums.Count; i++)
-                {
-                    if (getAlbums[i].Title == "TestLaserwarGames")
-                    {
-                        albumFind = true;
-                        AlbumId = getAlbums[i].Id;
-                        break;
-                    }
-                }
-                //если альбом не был найден, создаём новый
-                if (!albumFind)
-                {
-                    var createAlbum = api.Photo.CreateAlbum(new PhotoCreateAlbumParams
-                    {
-                        Title = "TestLaserwarGames"
-                    });
-                    AlbumId = createAlbum.Id;
-                }
-                
-                // Загрузить фото.
-                wc = new WebClient();
                 try
                 {
+
+                    var getAlbums = api.Photo.GetAlbums(new PhotoGetAlbumsParams { });
+
+                    long AlbumId = 0;
+                    bool albumFind = false;
+                    //Ищем альбом у пользователя
+                    for (int i = 0; i < getAlbums.Count; i++)
+                    {
+                        if (getAlbums[i].Title == "TestLaserwarGames")
+                        {
+                            albumFind = true;
+                            AlbumId = getAlbums[i].Id;
+                            break;
+                        }
+                    }
+                    //если альбом не был найден, создаём новый
+                    if (!albumFind)
+                    {
+                        var createAlbum = api.Photo.CreateAlbum(new PhotoCreateAlbumParams
+                        {
+                            Title = "TestLaserwarGames"
+                        });
+                        AlbumId = createAlbum.Id;
+                    }
+
+                    // Загрузить фото.
+                    wc = new WebClient();
+
                     // Получить адрес сервера для загрузки.
                     var uploadPhotoServer = api.Photo.GetUploadServer(AlbumId);
                     // Загрузить файл.
@@ -1283,7 +1295,7 @@ namespace TestLaserwar
                 }
                 catch (Exception ex)
                 {
-
+                    ErrorKey = 2;
                 }
             }            
 
@@ -1334,23 +1346,22 @@ namespace TestLaserwar
                 // если создавались вложения и скрин, удаляем их
                 if(keyDoc)File.Delete(PDFFileName);
                 if(keyScreen)File.Delete(@"ScreenShot.png");
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                {
-                    RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
-                });
+             
+                RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
+               
             }
             catch (Exception ex)
             {
                 // если создавались вложения и скрин, удаляем их
                 if (keyDoc) File.Delete(PDFFileName);
                 if (keyScreen) File.Delete(@"ScreenShot.png");
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
-                {
-                    //Отображаем сообщение об ошибке
-                    /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
-                    RefMainMenu(false, false, false, false, false, false, false, false, true, false, false, true);
-                    Err.ErrorMessage = "Не удалось опубликовать пост. Попробуйте повторить попытку.";
-                });
+              
+                Err.ErrorMessage = "Не удалось опубликовать пост. Проверьте начичие выхода в интернет и повторите попытку.";
+                if (ErrorKey == 1) Err.ErrorMessage += " Ошибки при загрузке вложения.";
+                if (ErrorKey == 2) Err.ErrorMessage += " Ошибки при загрузке скриншота программы.";
+                //Отображаем сообщение об ошибке
+                /// RefMainMenu(false, false, false, false, false, true, true, false, true, false, false, false);
+                RefMainMenu(hi, hi, hi, vi, hi, vi, hi, vi, vi, vi, hi, vi);              
             }
         }
 
@@ -1359,8 +1370,8 @@ namespace TestLaserwar
         /// </summary>
         private void SendVK_Click(object sender, RoutedEventArgs e)
         {
-            
-            RefMainMenu(false, false, false, false, false, true, false, true, true, true, true, false);
+            PrevMainFormKey = 4;
+            RefMainMenu(hi, hi, hi, vi, hi, vi, hi, vi, vi, vi, vi, hi);
           
             ComboBoxVK.ItemsSource = Groups;
 
@@ -1374,8 +1385,9 @@ namespace TestLaserwar
         /// </summary>
         private void CloseSend_Click(object sender, RoutedEventArgs e)
         {
+            PrevMainFormKey = 4;
             api.Dispose();
-            RefMainMenu(false, false, false, true, false, false, false, false, false, false, false, false);
+            RefMainMenu(hi, hi, hi, vi, hi, hi, hi, hi, hi, hi, hi, hi);
         }
 
 
